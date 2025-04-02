@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/landing.dart';
+
+import 'package:tic_quiz/pages/register.dart';
 import 'package:tic_quiz/pages/welcome.dart';
 
 void main() {
@@ -18,6 +20,8 @@ class MyApp extends StatelessWidget {
       routes: {
         'landing': (context) => const MyLanding(),
         'welcome': (context) => const Welcome(),
+        'register': (context) => const Register(),
+      
       },
     );
   }

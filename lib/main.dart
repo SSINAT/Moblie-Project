@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/landing.dart';
-import 'package:tic_quiz/welcome.dart';
+import 'package:tic_quiz/pages/landing.dart';
+import 'package:tic_quiz/pages/welcome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'TIC Quiz',
       debugShowCheckedModeBanner: false,
-      initialRoute: 'landing', // Start on the landing screen
+      initialRoute: 'landing', 
       routes: {
         'landing': (context) => const MyLanding(),
         'welcome': (context) => const Welcome(),

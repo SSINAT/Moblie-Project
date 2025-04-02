@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tic_quiz/Login.dart';
 import 'package:tic_quiz/landing.dart';
 import 'package:tic_quiz/welcome.dart';
 
@@ -18,6 +19,8 @@ class MyApp extends StatelessWidget {
       routes: {
         'landing': (context) => const MyLanding(),
         'welcome': (context) => const Welcome(),
+        'login': (context) => LoginScreen(),
+
       },
     );
   }

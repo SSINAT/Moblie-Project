@@ -23,21 +23,28 @@ class Welcome extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
+
+            // Ensure 'register' route exists in main.dart before using it
             ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, 'register'),
+              onPressed: () {
+                Navigator.pushNamed(context, 'register'); // Only if 'register' exists in main.dart
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 43, 6, 253),
                 minimumSize: const Size(250, 50),
               ),
               child: const Text(
-              
                 'Register',
                 style: TextStyle(color: Colors.white), 
               ),
             ),
+            
             const SizedBox(height: 20),
+
             ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, 'login'),
+              onPressed: () {
+                Navigator.pushNamed(context, 'login'); // Ensure 'login' is registered in main.dart
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white, 
                 minimumSize: const Size(250, 50),

@@ -29,6 +29,7 @@ flutter:
     - assets/Logo.png
     - assets/Logo2.png
     - assets/welcome.png
+    - assets/google.png
 
   uses-material-design: true
 

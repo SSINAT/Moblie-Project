@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tic_quiz/pages/Login.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -172,10 +173,10 @@ class _RegisterScreen extends State<Register> {
                     SizedBox(width: 2),
                     TextButton(
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => Login()),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                        );
                       },
                       child: Text(
                         "Login Now",

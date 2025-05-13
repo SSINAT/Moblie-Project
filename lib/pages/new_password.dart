@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/Login.dart';
+import 'package:tic_quiz/pages/reset_password_phone.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+class NewPassword extends StatefulWidget {
+  const NewPassword({super.key});
   @override
-  _RegisterScreen createState() => _RegisterScreen();
+  _newPassword createState() => _newPassword();
 }
 
-class _RegisterScreen extends State<Register> {
+class _newPassword extends State<NewPassword> {
   bool _obscurePassword = true;
 
   @override
@@ -17,16 +18,17 @@ class _RegisterScreen extends State<Register> {
 
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 100),
             Column(
               children: [
                 Center(
                   child: Text(
-                    "Sign Up",
+                    "New Password",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 40,
@@ -40,53 +42,9 @@ class _RegisterScreen extends State<Register> {
             ),
 
             SizedBox(height: 10),
+
             Text(
-              "Name",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 48, 45, 45),
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Enter your name",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Email",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 48, 45, 45),
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: "example@gmail.com",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Password",
+              "Enter new password",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -97,7 +55,7 @@ class _RegisterScreen extends State<Register> {
             TextField(
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                hintText: 'Enter your password',
+                hintText: 'new password',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
@@ -120,7 +78,7 @@ class _RegisterScreen extends State<Register> {
             ),
             SizedBox(height: 10),
             Text(
-              "Confirm Password",
+              "Confirm New Password",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -142,22 +100,27 @@ class _RegisterScreen extends State<Register> {
               ),
             ),
             SizedBox(height: 20),
-
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
                 backgroundColor: const Color.fromARGB(255, 43, 6, 253),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                    20,
+                    10,
                   ), // Set border radius for button
                 ),
               ),
-              child: Text('Create Account', style: TextStyle(fontSize: 16)),
+              child: Text('Send Now', style: TextStyle(fontSize: 16)),
             ),
-
+           
+            SizedBox(height: 80),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -175,7 +138,9 @@ class _RegisterScreen extends State<Register> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
                         );
                       },
                       child: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/register.dart';
+import 'package:tic_quiz/pages/reset_password_phone.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -58,7 +59,14 @@ class LoginScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResetPasswordByPhone(),
+                      ),
+                    );
+                  },
                   child: Text(
                     'Forgot password?',
                     style: TextStyle(color: Color(0xFF083DED)),

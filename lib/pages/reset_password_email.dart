@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/Login.dart';
+import 'package:tic_quiz/pages/reset_password_phone.dart';
+import 'package:tic_quiz/pages/verification.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+class ResetPasswordByEmail extends StatefulWidget {
+  const ResetPasswordByEmail({super.key});
   @override
-  _RegisterScreen createState() => _RegisterScreen();
+  _resetPassword createState() => _resetPassword();
 }
 
-class _RegisterScreen extends State<Register> {
+class _resetPassword extends State<ResetPasswordByEmail> {
   bool _obscurePassword = true;
 
   @override
@@ -17,16 +19,17 @@ class _RegisterScreen extends State<Register> {
 
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 100),
             Column(
               children: [
                 Center(
                   child: Text(
-                    "Sign Up",
+                    "Recover Password",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 40,
@@ -41,7 +44,7 @@ class _RegisterScreen extends State<Register> {
 
             SizedBox(height: 10),
             Text(
-              "Name",
+              "Enter your email here",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -51,87 +54,7 @@ class _RegisterScreen extends State<Register> {
             SizedBox(height: 5),
             TextField(
               decoration: InputDecoration(
-                hintText: "Enter your name",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Email",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 48, 45, 45),
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: "example@gmail.com",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Password",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 48, 45, 45),
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                hintText: 'Enter your password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
-
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Confirm Password",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 48, 45, 45),
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                hintText: 'Confirm your password',
+                hintText: "Example: example@gmail.com",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
@@ -142,22 +65,43 @@ class _RegisterScreen extends State<Register> {
               ),
             ),
             SizedBox(height: 20),
-
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => VerificationPassword()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
                 backgroundColor: const Color.fromARGB(255, 43, 6, 253),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                    20,
+                    10,
                   ), // Set border radius for button
                 ),
               ),
-              child: Text('Create Account', style: TextStyle(fontSize: 16)),
+              child: Text('Send Now', style: TextStyle(fontSize: 16)),
             ),
-
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ResetPasswordByPhone()),
+                );
+              },
+              child: Text(
+                "Use email phone number",
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 65, 64, 67),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            SizedBox(height: 80),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -175,7 +119,9 @@ class _RegisterScreen extends State<Register> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
                         );
                       },
                       child: Text(

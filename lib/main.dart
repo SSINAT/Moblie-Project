@@ -4,8 +4,10 @@ import 'package:tic_quiz/pages/landing.dart';
 
 import 'package:tic_quiz/pages/register.dart';
 import 'package:tic_quiz/pages/welcome.dart';
-
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+void main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

@@ -14,7 +14,6 @@ class _RegisterScreen extends State<Register> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Column(

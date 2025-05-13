@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: "^0.14.3"
+  firebase_core: ^2.25.4 # check for latest version
+  firebase_auth: ^4.17.6 # example
 
 flutter_icons:
   ios: true

@@ -87,12 +87,11 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: () {},
-                icon: Image.asset(
-                  'assets/google.png',
-                  height: 24,
+                icon: Image.asset('assets/google.png', height: 24),
+                label: const Text(
+                  'Google',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                label: const Text('Google',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[300],
                   foregroundColor: Colors.black,
@@ -109,12 +108,12 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   Text("Don’t have an account?"),
                   TextButton(
-                     onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Register()),
-                        );
-                      },
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Register()),
+                      );
+                    },
                     child: Text(
                       "Create now",
                       style: TextStyle(color: Color(0xFF083DED)),

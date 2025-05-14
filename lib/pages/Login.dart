@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tic_quiz/pages/home_page.dart';
 import 'package:tic_quiz/pages/register.dart';
 
 class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +50,12 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF083DED),
                   minimumSize: Size(double.infinity, 50),

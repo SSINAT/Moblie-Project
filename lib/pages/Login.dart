@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/home_page.dart';
+import 'package:tic_quiz/pages/main_page.dart';
 import 'package:tic_quiz/pages/register.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -85,8 +86,11 @@ Future<void> login(BuildContext context) async {
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  login(context);
-                },
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MainScreen()),
+                        );
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF083DED),
                   minimumSize: Size(double.infinity, 50),

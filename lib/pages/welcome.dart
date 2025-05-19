@@ -27,7 +27,7 @@ class Welcome extends StatelessWidget {
             // Ensure 'register' route exists in main.dart before using it
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, 'register'); // Only if 'register' exists in main.dart
+                Navigator.pushNamed(context, '/signup'); // Only if 'register' exists in main.dart
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 43, 6, 253),
@@ -43,7 +43,7 @@ class Welcome extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, 'login'); // Ensure 'login' is registered in main.dart
+                Navigator.pushNamed(context, '/login'); // Ensure 'login' is registered in main.dart
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white, 

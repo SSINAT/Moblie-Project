@@ -1,7 +1,41 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/register.dart';
 
 class LoginScreen extends StatelessWidget {
+
+final TextEditingController emailController = TextEditingController();
+final TextEditingController passwordController = TextEditingController();
+
+  LoginScreen({Key? key}) : super(key: key);
+
+
+
+Future<void> login(BuildContext context) async {
+    try{
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Login successful'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+    }
+    catch(e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed'),
+          backgroundColor: Colors.red,
+        ),
+      );
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +65,7 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 24),
               Text('Email'),
               TextField(
+                controller: emailController,
                 decoration: InputDecoration(
                   hintText: 'hello@example.com',
                   border: OutlineInputBorder(),
@@ -40,6 +75,7 @@ class LoginScreen extends StatelessWidget {
               Text('Password'),
               TextField(
                 obscureText: true,
+                controller: passwordController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.visibility_off),
@@ -47,7 +83,9 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  login(context);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF083DED),
                   minimumSize: Size(double.infinity, 50),

@@ -24,8 +24,6 @@ class TicQuizApp extends StatelessWidget {
         '/signup': (context) => const Register(),
         '/welcome': (context) => const Welcome(),
         '/home': (context) => const HomePage(),
-        // '/quiz-intro': (context) => const QuizIntroScreen(),
-        // '/quiz-history': (context) => const QuizHistoryScreen(),
         '/ranking': (context) => const RankingPage(),
         '/profile': (context) => const ProfilePage(),
       },

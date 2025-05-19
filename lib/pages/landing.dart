@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tic_quiz/routes/app_routes.dart';
 
 class MyLanding extends StatefulWidget {
   const MyLanding({super.key});
@@ -12,7 +14,12 @@ class _MyLandingState extends State<MyLanding> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, 'welcome');
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.welcome);
+      }
     });
   }
 
@@ -20,15 +27,7 @@ class _MyLandingState extends State<MyLanding> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.pushReplacementNamed(context, 'welcome');
-          },
-          child: Image(
-            image: const AssetImage('assets/Logo.png'),
-            height: 250,
-          ),
-        ),
+        child: Image.asset('assets/Logo.png', height: 250),
       ),
     );
   }

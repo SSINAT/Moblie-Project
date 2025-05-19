@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/home_page.dart';
+import 'package:tic_quiz/pages/main_page.dart';
 import 'package:tic_quiz/pages/register.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -53,7 +54,7 @@ class LoginScreen extends StatelessWidget {
                 onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => MainScreen()),
                         );
                       },
                 style: ElevatedButton.styleFrom(

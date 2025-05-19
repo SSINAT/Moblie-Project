@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tic_quiz/pages/home_page.dart';
 import 'package:tic_quiz/pages/register.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -7,7 +8,7 @@ class LoginScreen extends StatelessWidget {
 final TextEditingController emailController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
 
-  LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({super.key});
 
 
 
@@ -117,12 +118,11 @@ Future<void> login(BuildContext context) async {
               SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: () {},
-                icon: Image.asset(
-                  'assets/google.png',
-                  height: 24,
+                icon: Image.asset('assets/google.png', height: 24),
+                label: const Text(
+                  'Google',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                label: const Text('Google',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[300],
                   foregroundColor: Colors.black,
@@ -139,12 +139,12 @@ Future<void> login(BuildContext context) async {
                 children: [
                   Text("Don’t have an account?"),
                   TextButton(
-                     onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Register()),
-                        );
-                      },
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Register()),
+                      );
+                    },
                     child: Text(
                       "Create now",
                       style: TextStyle(color: Color(0xFF083DED)),

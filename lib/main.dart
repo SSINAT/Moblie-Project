@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/pages/Login.dart';
-import 'package:tic_quiz/pages/landing.dart';
-
-import 'package:tic_quiz/pages/register.dart';
-import 'package:tic_quiz/pages/welcome.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:tic_quiz/pages/main_page.dart';
 void main() async {
    WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -17,17 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TIC Quiz',
-      debugShowCheckedModeBanner: false,
-      initialRoute: 'landing', 
-      routes: {
-        'landing': (context) => const MyLanding(),
-        'welcome': (context) => const Welcome(),
-        'login': (context) => LoginScreen(),
+      title: 'Tic Quiz',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const MainScreen(),
 
-        'register': (context) => const Register(),
-      
-      },
     );
   }
 }

@@ -17,7 +17,7 @@ class BottomNavBar extends StatelessWidget {
       backgroundColor: Colors.white,
       buttonBackgroundColor:const Color.fromARGB(255, 8, 0, 255),
       color: const Color.fromARGB(255, 8, 0, 255),
-      height: 65,
+      height: 75,
       animationDuration: const Duration(milliseconds: 300),
       index: currentIndex,
       onTap: onTap,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/Login.dart';
-import 'package:tic_quiz/pages/reset_password_phone.dart';
+
 
 class NewPassword extends StatefulWidget {
   const NewPassword({super.key});

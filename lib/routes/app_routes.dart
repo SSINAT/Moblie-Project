@@ -7,7 +7,6 @@ import 'package:tic_quiz/pages/reset_password_email.dart';
 import 'package:tic_quiz/pages/reset_password_phone.dart';
 import 'package:tic_quiz/pages/new_password.dart';
 import 'package:tic_quiz/pages/verification.dart';
-import 'package:tic_quiz/pages/landing.dart';
 
 
 
@@ -21,7 +20,6 @@ class AppRoutes {
   static const String resetPasswordEmail = '/reset_password_email';
   static const String verification = '/verification';
   static const String newPassword = '/new_password';
-  static const String landing = '/landing';
   static const String profile = '/profile';
   static const String ranking = '/ranking';
   static const String resetPasswordByPhone = '/reset_password_phone';

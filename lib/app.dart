@@ -1,64 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tic_quiz/pages/Login.dart';
-import 'package:tic_quiz/pages/home_page.dart';
-import 'package:tic_quiz/pages/profile_page.dart';
-import 'package:tic_quiz/pages/ranking_page.dart';
+import 'package:tic_quiz/pages/login.dart';
+import 'package:tic_quiz/pages/main_page.dart';
 import 'package:tic_quiz/pages/register.dart';
 import 'package:tic_quiz/pages/welcome.dart';
-import 'package:tic_quiz/pages/reset_password_email.dart';
+import 'package:tic_quiz/pages/ranking_page.dart';
+import 'package:tic_quiz/pages/profile_page.dart';
 import 'package:tic_quiz/pages/reset_password_phone.dart';
-import 'package:tic_quiz/pages/new_password.dart';
+import 'package:tic_quiz/pages/reset_password_email.dart';
 import 'package:tic_quiz/pages/verification.dart';
 import 'package:tic_quiz/pages/new_password.dart';
-class TicQuizApp extends StatelessWidget {
-  const TicQuizApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tic Quiz',
-      debugShowCheckedModeBanner: false,
-    
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        fontFamily: 'Arial',
-      ),
-      // home: const Root(),
-      initialRoute: '/',
-      routes: {
-        '/login': (context) => LoginScreen(),
-        '/signup': (context) => const Register(),
-        '/welcome': (context) => const Welcome(),
-        '/home': (context) => const HomePage(),
-        '/ranking': (context) => const RankingPage(),
-        '/profile': (context) => const ProfilePage(),
 
-        '/reset_password': (context) => const ResetPasswordByPhone(),
-        '/reset_password_email': (context) => const ResetPasswordByEmail(),
-        '/verification': (context) => const VerificationPassword(),
-        '/new_password': (context) => const NewPassword(),
-      },
-    );
-  }
-}
+class AppRoutes {
+  static const String welcome = '/welcome';
+  static const String login = '/login';
+  static const String signup = '/signup';
+  static const String home = '/home';
+  static const String main = '/main';
+  static const String ranking = '/ranking';
+  static const String profile = '/profile';
+  static const String resetPasswordPhone = '/reset_password_phone';
+  static const String resetPasswordEmail = '/reset_password_email';
+  static const String verificationPassword = '/verification';
+  static const String newPassword = '/new_password';
 
-/// Decides initial screen based on auth state
-class Root extends StatelessWidget {
-  const Root({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasData) {
-          return const HomePage();
-        } else {
-          return const Welcome(); 
-        }
-      },
-    );
-  }
+  static final Map<String, WidgetBuilder> routes = {
+    welcome: (context) => const Welcome(),
+    login: (context) => LoginScreen(),
+    signup: (context) => const Register(),
+    main: (context) => const MainScreen(),
+    ranking: (context) => const RankingPage(),
+    profile: (context) => const ProfilePage(),
+    resetPasswordPhone: (context) => const ResetPasswordByPhone(),
+    resetPasswordEmail: (context) => const ResetPasswordByEmail(),
+    verificationPassword: (context) => const VerificationPassword(),
+    newPassword: (context) => const NewPassword(),
+  };
 }

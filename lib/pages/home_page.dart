@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                                             ? Colors.blue
                                             : Colors.blue[300],
                                     borderRadius: BorderRadius.circular(10),
-                                  ),
+                                  ), 
                                   child: const Text(
                                     'Current',
                                     style: TextStyle(

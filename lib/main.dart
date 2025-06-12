@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/pages/Login.dart';
-import 'package:tic_quiz/pages/landing.dart';
-import 'package:tic_quiz/pages/new_password.dart';
-
-import 'package:tic_quiz/pages/register.dart';
-import 'package:tic_quiz/pages/reset_password_email.dart';
-import 'package:tic_quiz/pages/reset_password_phone.dart';
-import 'package:tic_quiz/pages/verification.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tic_quiz/pages/landing.dart'; // your splash screen
+import 'package:tic_quiz/pages/main_page.dart';
 import 'package:tic_quiz/pages/welcome.dart';
-import 'package:tic_quiz/routes/app_routes.dart'; // this file
+import 'package:tic_quiz/routes/app_routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,22 +19,31 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tic Quiz',
       debugShowCheckedModeBanner: false,
-      initialRoute: 'landing', 
-      // routes: {
-      //   'landing': (context) => const MyLanding(),
-      //   'welcome': (context) => const Welcome(),
-      //   'login': (context) => LoginScreen(),
-
-      //   'register': (context) => const Register(),
-      //   'reset_password': (context) => const ResetPasswordByPhone(),
-      //   'reset_password_email': (context) => const ResetPasswordByEmail(),
-      //   'verification': (context) => const VerificationPassword(),
-      //   'new_password': (context) => const NewPassword(),
-      
-      // },
-      theme: ThemeData(primarySwatch: Colors.indigo),
-      home: const MyLanding(), // Splash screen
+      theme: ThemeData(primarySwatch: Colors.indigo, fontFamily: 'Arial'),
+      home: const Root(),
       routes: AppRoutes.routes,
+    );
+  }
+}
+
+class Root extends StatelessWidget {
+  const Root({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasData) {
+          return const MainScreen(); // Logged-in users go to MainScreen
+        }
+        return const Welcome(); // Logged-out users go to Welcome
+      },
     );
   }
 }

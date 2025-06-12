@@ -5,7 +5,7 @@ import '../models/user_ranking.dart';
 import '../services/ranking_service.dart';
 
 class RankingPage extends StatefulWidget {
-  const RankingPage({Key? key}) : super(key: key);
+  const RankingPage({super.key});
 
   @override
   _RankingScreenState createState() => _RankingScreenState();

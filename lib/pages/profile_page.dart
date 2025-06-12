@@ -338,45 +338,45 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF4285F4),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white70,
-          currentIndex: 3, // Profile tab selected
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.play_arrow), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          ],
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                Navigator.pushReplacementNamed(context, '/home');
-                break;
-              case 1:
-                Navigator.pushReplacementNamed(context, '/quiz');
-                break;
-              case 2:
-                Navigator.pushReplacementNamed(context, '/stats');
-                break;
-              case 3:
-                // Already on profile
-                break;
-            }
-          },
-        ),
-      ),
+      // bottomNavigationBar: Container(
+      //   decoration: BoxDecoration(
+      //     color: const Color(0xFF4285F4),
+      //     borderRadius: const BorderRadius.only(
+      //       topLeft: Radius.circular(20),
+      //       topRight: Radius.circular(20),
+      //     ),
+      //   ),
+      //   child: BottomNavigationBar(
+      //     type: BottomNavigationBarType.fixed,
+      //     backgroundColor: Colors.transparent,
+      //     elevation: 0,
+      //     selectedItemColor: Colors.white,
+      //     unselectedItemColor: Colors.white70,
+      //     currentIndex: 3, // Profile tab selected
+      //     items: const [
+      //       BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+      //       BottomNavigationBarItem(icon: Icon(Icons.play_arrow), label: ''),
+      //       BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ''),
+      //       BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      //     ],
+      //     onTap: (index) {
+      //       switch (index) {
+      //         case 0:
+      //           Navigator.pushReplacementNamed(context, '/home');
+      //           break;
+      //         case 1:
+      //           Navigator.pushReplacementNamed(context, '/quiz');
+      //           break;
+      //         case 2:
+      //           Navigator.pushReplacementNamed(context, '/stats');
+      //           break;
+      //         case 3:
+      //           // Already on profile
+      //           break;
+      //       }
+      //     },
+      //   ),
+      // ),
     );
   }
 }

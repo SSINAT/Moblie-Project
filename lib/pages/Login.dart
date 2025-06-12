@@ -1,41 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/pages/home_page.dart';
 import 'package:tic_quiz/pages/main_page.dart';
 import 'package:tic_quiz/pages/register.dart';
 import 'package:tic_quiz/pages/reset_password_phone.dart';
 
 class LoginScreen extends StatelessWidget {
-
-final TextEditingController emailController = TextEditingController();
-final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   LoginScreen({super.key});
 
-
-
-Future<void> login(BuildContext context) async {
-    try{
+  Future<void> login(BuildContext context) async {
+    try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login successful'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-    }
-    catch(e) {
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login failed'),
-          backgroundColor: Colors.red,
+          content: Text('Login successful'),
+          backgroundColor: Colors.green,
         ),
       );
-
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed'), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -87,11 +81,13 @@ Future<void> login(BuildContext context) async {
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MainScreen()),
-                        );
-                      },
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => MainScreen()),
+                  // );
+                  login(context);
+
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF083DED),
                   minimumSize: Size(double.infinity, 50),

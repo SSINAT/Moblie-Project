@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tic_quiz/pages/landing.dart'; // your splash screen
-import 'package:tic_quiz/pages/welcome.dart';
 import 'package:tic_quiz/routes/app_routes.dart'; // this file
 
 void main() async {

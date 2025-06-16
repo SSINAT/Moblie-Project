@@ -13,42 +13,46 @@ class RankingPage extends StatefulWidget {
 
 class _RankingScreenState extends State<RankingPage> {
   final RankingService _rankingService = RankingService();
-  late Future<List<UserRanking>> _rankingsFuture;
-  late Future<UserRanking?> _currentUserRankingFuture;
+  late Stream<List<UserRanking>> _rankingsStream;
 
   @override
   void initState() {
     super.initState();
-    _rankingsFuture = _rankingService.getTopRankings();
-    _currentUserRankingFuture = _rankingService.getCurrentUserRanking();
+    _rankingsStream = _rankingService.getTopRankings();
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final safePadding =
+        MediaQuery.of(context).padding.top +
+        MediaQuery.of(context).padding.bottom;
+    final availableHeight =
+        screenHeight -
+        safePadding -
+        kBottomNavigationBarHeight; // Approx 56 for BottomNavBar
+
     return Scaffold(
-      body: Container(
-        color: Color.fromARGB(255, 25, 0, 255),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(),
-              _buildTopThree(),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                  child: _buildRankingList(),
+      backgroundColor: const Color.fromARGB(255, 25, 0, 255),
+      body: Column(
+        children: [
+          _buildHeader(),
+          _buildTopThree(
+            availableHeight * 0.3,
+          ), // Dynamic height based on screen
+          Expanded(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
               ),
-          
-            ],
+              child: _buildRankingList(),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -58,10 +62,6 @@ class _RankingScreenState extends State<RankingPage> {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 225, 130, 35)),
-            onPressed: () => Navigator.pop(context),
-          ),
           Expanded(
             child: Center(
               child: Text(
@@ -71,7 +71,7 @@ class _RankingScreenState extends State<RankingPage> {
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   shadows: [
-                    Shadow(
+                    const Shadow(
                       offset: Offset(1, 1),
                       blurRadius: 3.0,
                       color: Color.fromARGB(100, 0, 0, 0),
@@ -81,64 +81,79 @@ class _RankingScreenState extends State<RankingPage> {
               ),
             ),
           ),
-          SizedBox(width: 48), // Balance the back button
         ],
       ),
     );
   }
 
-  Widget _buildTopThree() {
-    return FutureBuilder<List<UserRanking>>(
-      future: _rankingsFuture,
+  Widget _buildTopThree(double maxHeight) {
+    return StreamBuilder<List<UserRanking>>(
+      stream: _rankingsStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SizedBox(
-            height: 200,
-            child: Center(child: CircularProgressIndicator(color: Colors.white)),
+            height: maxHeight,
+            child: Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           );
         }
 
-        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+        final rankings = snapshot.data ?? [];
+        if (rankings.isEmpty) {
           return SizedBox(
-            height: 200,
-            child: Center(child: Text('No ranking data available', style: TextStyle(color: Colors.white))),
+            height: maxHeight,
+            child: Center(
+              child: Text(
+                'No ranking data available',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           );
         }
 
-        final rankings = snapshot.data!;
         final topThree = rankings.take(3).toList();
-        
-        // Ensure we have 3 items for the podium
         while (topThree.length < 3) {
-          topThree.add(UserRanking(
-            uid: 'placeholder-${topThree.length}',
-            name: 'N/A',
-            photoUrl: '',
-            points: 0,
-            rank: topThree.length + 1,
-          ));
+          topThree.add(
+            UserRanking(
+              uid: 'placeholder-${topThree.length}',
+              name: 'N/A',
+              photoUrl: '',
+              points: 0,
+              rank: topThree.length + 1,
+            ),
+          );
         }
 
-        // Reorder for the podium (1st in center, 2nd on left, 3rd on right)
         final first = topThree.isNotEmpty ? topThree[0] : null;
         final second = topThree.length > 1 ? topThree[1] : null;
         final third = topThree.length > 2 ? topThree[2] : null;
 
         return Container(
-          height: 220,
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          height: maxHeight,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // Second place
-              _buildPodiumItem(second, 2, Colors.indigo.shade300, 80),
-              
-              // First place
-              _buildPodiumItem(first, 1, Colors.orange, 100),
-              
-              // Third place
-              _buildPodiumItem(third, 3, Colors.indigo.shade300, 60),
+              _buildPodiumItem(
+                second,
+                2,
+                Colors.indigo.shade300,
+                maxHeight * 0.36,
+              ), // Adjusted proportionally
+              _buildPodiumItem(
+                first,
+                1,
+                Colors.orange,
+                maxHeight * 0.45,
+              ), // Adjusted proportionally
+              _buildPodiumItem(
+                third,
+                3,
+                Colors.indigo.shade300,
+                maxHeight * 0.27,
+              ), // Adjusted proportionally
             ],
           ),
         );
@@ -146,48 +161,68 @@ class _RankingScreenState extends State<RankingPage> {
     );
   }
 
-  Widget _buildPodiumItem(UserRanking? user, int position, Color color, double height) {
+  Widget _buildPodiumItem(
+    UserRanking? user,
+    int position,
+    Color color,
+    double height,
+  ) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (user != null) ...[
+        if (user != null && user.name != 'N/A') ...[
           CircleAvatar(
             radius: 30,
-            backgroundImage: user.photoUrl.isNotEmpty
-                ? NetworkImage(user.photoUrl)
-                : AssetImage('assets/images/avatar.svg') as ImageProvider,
+            backgroundImage:
+                user.photoUrl.isNotEmpty
+                    ? NetworkImage(user.photoUrl)
+                    : const AssetImage('assets/images/avatar.svg')
+                        as ImageProvider,
             backgroundColor: Colors.white,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             user.name,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.circle, color: Colors.white, size: 16),
+              const SizedBox(width: 4),
+              Text(
+                _formatPoints(user.points),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
         ] else ...[
-          CircleAvatar(
+          const CircleAvatar(
             radius: 30,
-            backgroundColor: Colors.grey.shade300,
-            child: Icon(Icons.person, color: Colors.grey),
+            backgroundColor: Colors.grey,
+            child: Icon(Icons.person, color: Colors.white),
           ),
-          SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             'N/A',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ],
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           width: 80,
           height: height,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8),
               topRight: Radius.circular(8),
             ),
@@ -195,7 +230,7 @@ class _RankingScreenState extends State<RankingPage> {
           child: Center(
             child: Text(
               position.toString(),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -208,35 +243,23 @@ class _RankingScreenState extends State<RankingPage> {
   }
 
   Widget _buildRankingList() {
-    return FutureBuilder<List<UserRanking>>(
-      future: _rankingsFuture,
+    return StreamBuilder<List<UserRanking>>(
+      stream: _rankingsStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          return Center(child: Text('Error loading rankings'));
+          return const Center(child: CircularProgressIndicator());
         }
 
         final rankings = snapshot.data ?? [];
-        
-        // Skip the top 3 for the list below
-        final remainingRankings = rankings.length > 3 ? rankings.sublist(3) : [];
+        final remainingRankings =
+            rankings.length > 3 ? rankings.sublist(3) : [];
 
-        return Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: remainingRankings.length,
-                itemBuilder: (context, index) {
-                  final ranking = remainingRankings[index];
-                  return _buildRankingListItem(ranking);
-                },
-              ),
-            ),
-            _buildCurrentUserRanking(),
-          ],
+        return ListView.builder(
+          itemCount: remainingRankings.length,
+          itemBuilder: (context, index) {
+            final ranking = remainingRankings[index];
+            return _buildRankingListItem(ranking);
+          },
         );
       },
     );
@@ -244,10 +267,8 @@ class _RankingScreenState extends State<RankingPage> {
 
   Widget _buildRankingListItem(UserRanking ranking) {
     return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade200),
-        ),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.grey)),
       ),
       child: ListTile(
         leading: Row(
@@ -257,119 +278,37 @@ class _RankingScreenState extends State<RankingPage> {
               width: 30,
               child: Text(
                 ranking.rank.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             CircleAvatar(
-              backgroundImage: ranking.photoUrl.isNotEmpty
-                  ? NetworkImage(ranking.photoUrl)
-                  : AssetImage('assets/images/avatar.png') as ImageProvider,
+              backgroundImage:
+                  ranking.photoUrl.isNotEmpty
+                      ? NetworkImage(ranking.photoUrl)
+                      : const AssetImage('assets/images/avatar.png')
+                          as ImageProvider,
             ),
           ],
         ),
         title: Text(
           ranking.name,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.thumb_up, color: Colors.grey),
-            SizedBox(width: 4),
+            const Icon(Icons.circle, color: Colors.grey, size: 16),
+            const SizedBox(width: 4),
             Text(
               _formatPoints(ranking.points),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildCurrentUserRanking() {
-    return FutureBuilder<UserRanking?>(
-      future: _currentUserRankingFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            height: 60,
-            color: Colors.grey.shade200,
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        final currentUserRanking = snapshot.data;
-        
-        if (currentUserRanking == null) {
-          return Container(
-            height: 60,
-            color: Colors.grey.shade200,
-            child: Center(child: Text('Complete a quiz to see your ranking')),
-          );
-        }
-
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.blue.shade100,
-            border: Border(
-              left: BorderSide(color: Colors.blue, width: 4),
-            ),
-          ),
-          child: ListTile(
-            leading: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 30,
-                  child: Text(
-                    currentUserRanking.rank > 999 ? '—' : currentUserRanking.rank.toString(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                CircleAvatar(
-                  backgroundImage: currentUserRanking.photoUrl.isNotEmpty
-                      ? NetworkImage(currentUserRanking.photoUrl)
-                      : AssetImage('assets/images/avatar.png') as ImageProvider,
-                ),
-              ],
-            ),
-            title: Text(
-              'You',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.thumb_up, color: Colors.blue),
-                SizedBox(width: 4),
-                Text(
-                  _formatPoints(currentUserRanking.points),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -381,3 +320,6 @@ class _RankingScreenState extends State<RankingPage> {
     return points.toString();
   }
 }
+
+const double kBottomNavigationBarHeight =
+    56.0; // Approximate height of BottomNavBar

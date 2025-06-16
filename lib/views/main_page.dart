@@ -33,9 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _pages[_currentIndex],
-      ), // Use SafeArea to prevent overlap
+      body: _pages[_currentIndex], // Remove SafeArea to allow full screen
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,

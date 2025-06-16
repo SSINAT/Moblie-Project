@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/views/home_page.dart';
-import 'package:tic_quiz/views/quiz_page.dart';
-import 'package:tic_quiz/views/ranking_page.dart';
-import 'package:tic_quiz/views/profile_page.dart';
+import 'package:tic_quiz/screen/home_page.dart';
+import 'package:tic_quiz/screen/profile_page.dart';
+
+import 'package:tic_quiz/screen/quiz/startQuiz_page.dart';
+import 'package:tic_quiz/screen/ranking_page.dart';
 import 'package:tic_quiz/shared/bottom_nav_bar.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,9 +18,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const QuizPage(),
-    const RankingPage(),
-    ProfilePage(),
+    const StartQuizPage(),
+     RankingPage(), // Ensure RankingPage is included here
+    const ProfilePage(),
   ];
 
   void _onTabTapped(int index) {
@@ -33,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex], // Remove SafeArea to allow full screen
+      body: _pages[_currentIndex], // Pages are rendered here
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,

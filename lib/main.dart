@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tic_quiz/views/main_page.dart';
-import 'package:tic_quiz/views/welcome.dart';
+import 'package:tic_quiz/screen/welcome.dart';
 import 'package:tic_quiz/routes/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tic_quiz/services/firestore_service.dart';
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.indigo, fontFamily: 'Arial'),
       home: const Root(),
-      routes: AppRoutes.routes,
+      routes: AppRoutes.routes, // Use the defined routes
     );
   }
 }

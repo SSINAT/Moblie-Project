@@ -1,86 +1,34 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/views/auth/Login.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tic_quiz/screen/auth/Login.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+
+class NewPassword extends StatefulWidget {
+  const NewPassword({super.key});
   @override
-  _RegisterScreen createState() => _RegisterScreen();
+  _newPassword createState() => _newPassword();
 }
 
-final TextEditingController nameController = TextEditingController();
-final TextEditingController emailController = TextEditingController();
-final TextEditingController passwordController = TextEditingController();
-final TextEditingController confirmController = TextEditingController();
-
-Future<bool> registerUser({
-  required String name,
-  required String password,
-  required String email,
-  required String confirm,
-  required Function(String) onError,
-}) async {
-  try {
-    UserCredential userCredential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
-    User? user = userCredential.user;
-
-    // 2. Save additional user info in Firestore
-    await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
-      'uid': user.uid,
-      'email': email,
-      'name': name,
-      'createdAt': Timestamp.now(),
-    });
-
-    print("User registered successfully: ${user.uid}");
-    onError("User registered successfully");
-
-    return true;
-  } on FirebaseAuthException catch (e) {
-    print("Error registering user: $e");
-    if (e.code == 'email-already-in-use') {
-      onError("The account already exists for that email.");
-    } else if (e.code == 'weak-password') {
-      onError("The password provided is too weak.");
-    } else if (e.code == 'invalid-email') {
-      onError("The email address is not valid.");
-    } else {
-      onError("An error occurred. Please try again.");
-    }
-
-    // // if (e.code == 'weak-password') {
-    // //   _passwordError = "The password provided is too weak.";
-    // if (e.code == 'email-already-in-use') {
-
-    //   _passwordError = "The account already exists for that email.";
-    // } else {
-    //   _passwordError = "An error occurred. Please try again.";
-    // }
-    return false;
-  }
-}
-
-class _RegisterScreen extends State<Register> {
+class _newPassword extends State<NewPassword> {
   bool _obscurePassword = true;
-  String? _passwordError;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 100),
             Column(
               children: [
                 Center(
                   child: Text(
-                    "Sign Up",
+                    "New Password",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 40,
@@ -94,8 +42,9 @@ class _RegisterScreen extends State<Register> {
             ),
 
             SizedBox(height: 10),
+
             Text(
-              "Name",
+              "Enter new password",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -104,57 +53,9 @@ class _RegisterScreen extends State<Register> {
             ),
             SizedBox(height: 5),
             TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                hintText: "Enter your name",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Email",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 48, 45, 45),
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: "example@gmail.com",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Password",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 48, 45, 45),
-              ),
-            ),
-            SizedBox(height: 5),
-            TextField(
-              controller: passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                hintText: 'Enter your password',
+                hintText: 'new password',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
@@ -177,7 +78,7 @@ class _RegisterScreen extends State<Register> {
             ),
             SizedBox(height: 10),
             Text(
-              "Confirm Password",
+              "Confirm New Password",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -187,7 +88,6 @@ class _RegisterScreen extends State<Register> {
             SizedBox(height: 5),
             TextField(
               obscureText: true,
-              controller: confirmController,
               decoration: InputDecoration(
                 hintText: 'Confirm your password',
                 border: OutlineInputBorder(
@@ -199,44 +99,13 @@ class _RegisterScreen extends State<Register> {
                 ),
               ),
             ),
-            Center(
-              child: Text(
-                _passwordError ?? '',
-                style: TextStyle(color: Colors.red, fontSize: 14),
-              ),
-            ),
             SizedBox(height: 20),
-
             ElevatedButton(
-              onPressed: () async {
-                if (passwordController.text != confirmController.text) {
-                  setState(() {
-                    _passwordError = "Passwords do not match.";
-                  });
-                  return;
-                }
-
-                setState(() {
-                  _passwordError = null; // Clear the error message
-                });
-                bool success = await registerUser(
-                  name: nameController.text,
-                  password: passwordController.text,
-                  email: emailController.text,
-                  confirm: confirmController.text,
-                  onError:
-                      (e) => setState(() {
-                        _passwordError = e;
-                      }),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
-               if (success) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                  );
-                } 
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
@@ -244,13 +113,14 @@ class _RegisterScreen extends State<Register> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                    20,
+                    10,
                   ), // Set border radius for button
                 ),
               ),
-              child: Text('Create Account', style: TextStyle(fontSize: 16)),
+              child: Text('Send Now', style: TextStyle(fontSize: 16)),
             ),
-
+           
+            SizedBox(height: 80),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tic_quiz/models/question.dart';
-import 'package:tic_quiz/views/admin/add_question_screen.dart';
-import 'package:tic_quiz/views/admin/edit_question_screen.dart';
+import 'package:tic_quiz/screen/admin/add_question_screen.dart';
+import 'package:tic_quiz/screen/admin/edit_question_screen.dart';
 import 'package:tic_quiz/services/firestore_service.dart';
 
 class AdminDashboardScreen extends StatelessWidget {

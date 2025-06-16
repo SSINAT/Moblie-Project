@@ -28,6 +28,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.6
+  flutter_svg: ^2.0.9
 
 flutter:
   uses-material-design: true
@@ -37,6 +38,10 @@ flutter:
     - assets/google.png
     - assets/google_logo.png
     - assets/Logo_Android12.png
+    - assets/cpp.svg
+    - assets/java.svg
+    - assets/html.svg
+    - assets/python.svg
 
 flutter_launcher_icons:
   ios: true

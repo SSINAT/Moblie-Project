@@ -2,19 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-// final user = FirebaseAuth.instance.currentUser;
-
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
-
-
-  
 }
-
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
@@ -22,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   User? user;
   String userName = '';
 
- @override
+  @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
@@ -31,18 +24,17 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchUserData() async {
     if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .get();
 
       setState(() {
         userName = userDoc['name'] ?? '';
       });
     }
   }
-
-
 
   void _onItemTapped(int index) {
     setState(() {
@@ -76,303 +68,299 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(backgroundColor: Colors.white, elevation: 0),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 56.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.black,
-                                radius: 20,
-                                child: Image.network(
-                                  'https://via.placeholder.com/40',
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
-                                          const Icon(
-                                            Icons.person,
-                                            color: Colors.white,
-                                          ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                userName ?? 'Guest',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Icon(Icons.notifications_outlined, size: 24),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue[300],
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => _onSegmentTapped(true),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _showCurrent
-                                            ? Colors.blue
-                                            : Colors.blue[300],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ), 
-                                  child: const Text(
-                                    'Current',
-                                    style: TextStyle(
+                            CircleAvatar(
+                              backgroundColor: Colors.black,
+                              radius: 20,
+                              child: Image.network(
+                                'https://via.placeholder.com/40',
+                                errorBuilder:
+                                    (context, error, stackTrace) => const Icon(
+                                      Icons.person,
                                       color: Colors.white,
-                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ),
-                                ),
                               ),
                             ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => _onSegmentTapped(false),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        !_showCurrent
-                                            ? Colors.blue
-                                            : Colors.blue[300],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Text(
-                                    'History',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                            const SizedBox(width: 12),
+                            Text(
+                              userName ?? 'Guest',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
                               ),
                             ),
                           ],
                         ),
+                        const Icon(Icons.notifications_outlined, size: 24),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue[300],
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFEF0D1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child:
-                            _showCurrent
-                                ?
-                                // Current view with progress circle
-                                Column(
-                                  children: [
-                                    RichText(
-                                      textAlign: TextAlign.center,
-                                      text: const TextSpan(
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text:
-                                                'You have attempted a\ntotal ',
-                                          ),
-                                          TextSpan(
-                                            text: '40',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          TextSpan(text: ' '),
-                                          TextSpan(
-                                            text: 'quizzes',
-                                            style: TextStyle(
-                                              color: Colors.orange,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          TextSpan(text: ' !'),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    SizedBox(
-                                      height: 120,
-                                      width: 120,
-                                      child: Stack(
-                                        fit: StackFit.expand,
-                                        children: [
-                                          CircularProgressIndicator(
-                                            value: 40 / 50,
-                                            backgroundColor: Colors.white,
-                                            valueColor:
-                                                const AlwaysStoppedAnimation<
-                                                  Color
-                                                >(Colors.green),
-                                            strokeWidth: 10,
-                                          ),
-                                          Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: const [
-                                                Text(
-                                                  '40',
-                                                  style: TextStyle(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '/50',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black54,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'quiz played',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black54,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )
-                                :
-                                // History view with list of attempts
-                                Column(
-                                  children: [
-                                    ...historyData.map(
-                                      (item) => Container(
-                                        margin: const EdgeInsets.only(
-                                          bottom: 4,
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 10,
-                                          horizontal: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFEED6A7),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Date: ${item['date']}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            Text(
-                                              item['score'],
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _onSegmentTapped(true),
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
                                 ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      _showCurrent
+                                          ? Colors.blue
+                                          : Colors.blue[300],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Text(
+                                  'Current',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _onSegmentTapped(false),
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color:
+                                      !_showCurrent
+                                          ? Colors.blue
+                                          : Colors.blue[300],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Text(
+                                  'History',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF0D1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child:
+                          _showCurrent
+                              ?
+                              // Current view with progress circle
+                              Column(
+                                children: [
+                                  RichText(
+                                    textAlign: TextAlign.center,
+                                    text: const TextSpan(
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: 'You have attempted a\ntotal ',
+                                        ),
+                                        TextSpan(
+                                          text: '40',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(text: ' '),
+                                        TextSpan(
+                                          text: 'quizzes',
+                                          style: TextStyle(
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(text: ' !'),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    height: 120,
+                                    width: 120,
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          value: 40 / 50,
+                                          backgroundColor: Colors.white,
+                                          valueColor:
+                                              const AlwaysStoppedAnimation<
+                                                Color
+                                              >(Colors.green),
+                                          strokeWidth: 10,
+                                        ),
+                                        Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              Text(
+                                                '40',
+                                                style: TextStyle(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(
+                                                '/50',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                              Text(
+                                                'quiz played',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                              :
+                              // History view with scrollable list of attempts
+                              SizedBox(
+                                height:
+                                    300, // Fixed height for the scrollable area
+                                child: ListView.builder(
+                                  itemCount: historyData.length,
+                                  itemBuilder: (context, index) {
+                                    final item = historyData[index];
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFEED6A7),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Date: ${item['date']}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Text(
+                                            item['score'],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Featured Categories',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildCategoryItem(
-                    'C++',
-                    Colors.green,
-                    'assets/cpp_logo.png',
-                    () {
-                      print('C++ category tapped');
-                      // Add navigation logic for C++ category
-                    },
-                  ),
-                  _buildCategoryItem(
-                    'Java',
-                    Colors.blue[300]!,
-                    'assets/java_logo.png',
-                    () {
-                      print('Java category tapped');
-                      // Add navigation logic for Java category
-                    },
-                  ),
-                  _buildCategoryItem(
-                    'HTML',
-                    Colors.orange,
-                    'assets/html_logo.png',
-                    () {
-                      print('HTML category tapped');
-                      // Add navigation logic for HTML category
-                    },
-                  ),
-                  _buildCategoryItem(
-                    'Python',
-                    Colors.blue,
-                    'assets/python_logo.png',
-                    () {
-                      print('Python category tapped');
-                      // Add navigation logic for Python category
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Featured Categories',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildCategoryItem(
+                  'C++',
+                  Colors.green,
+                  'assets/cpp_logo.png',
+                  () {
+                    print('C++ category tapped');
+                    // Add navigation logic for C++ category
+                  },
+                ),
+                _buildCategoryItem(
+                  'Java',
+                  Colors.blue[300]!,
+                  'assets/java_logo.png',
+                  () {
+                    print('Java category tapped');
+                    // Add navigation logic for Java category
+                  },
+                ),
+                _buildCategoryItem(
+                  'HTML',
+                  Colors.orange,
+                  'assets/html_logo.png',
+                  () {
+                    print('HTML category tapped');
+                    // Add navigation logic for HTML category
+                  },
+                ),
+                _buildCategoryItem(
+                  'Python',
+                  Colors.blue,
+                  'assets/python_logo.png',
+                  () {
+                    print('Python category tapped');
+                    // Add navigation logic for Python category
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -42,7 +42,7 @@ class AdminDashboardScreen extends StatelessWidget {
               try {
                 await FirebaseAuth.instance.signOut(); // Sign out from Firebase
                 // Navigate to Welcome screen, replacing the current route
-                Navigator.pushReplacementNamed(context, '/login');
+                Navigator.pushReplacementNamed(context, '/welcome');
               } catch (e) {
                 ScaffoldMessenger.of(
                   context,
@@ -95,18 +95,18 @@ class AdminDashboardScreen extends StatelessWidget {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // IconButton(
-                              //   icon: const Icon(Icons.visibility),
-                              //   onPressed: () {
-                              //     ScaffoldMessenger.of(context).showSnackBar(
-                              //       SnackBar(
-                              //         content: Text(
-                              //           'Viewing: ${question['text']}',
-                              //         ),
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
+                              IconButton(
+                                icon: const Icon(Icons.visibility),
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Viewing: ${question['text']}',
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {

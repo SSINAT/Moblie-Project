@@ -12,12 +12,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController(
-    text: 'admin@gmail.com',
-  );
-  final TextEditingController passwordController = TextEditingController(
-    text: 'adminticquiz',
-  );
+  final TextEditingController emailController =
+      TextEditingController(); // Removed default text
+  final TextEditingController passwordController =
+      TextEditingController(); // Removed default text
   bool isLoading = false;
   String? errorMessage;
   final _formKey = GlobalKey<FormState>();
@@ -25,8 +23,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Email is required';
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value))
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
       return 'Please enter a valid email';
+    }
     return null;
   }
 
@@ -45,16 +44,23 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
+      print(
+        'Login successful for UID: ${FirebaseAuth.instance.currentUser?.uid}',
+      );
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final firestoreService = FirestoreService();
         final isAdmin = await firestoreService.isAdmin(user.uid);
+        print('Is Admin: $isAdmin');
         Navigator.pushReplacementNamed(
           context,
-          isAdmin ? AppRoutes.admin : AppRoutes.home,
+          isAdmin
+              ? AppRoutes.admin
+              : AppRoutes.main, // Navigate to MainScreen for non-admins
         );
       }
     } catch (e) {
+      print('Login error details: $e');
       setState(() {
         errorMessage =
             e.toString().contains('user-not-found') ||
@@ -72,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = true);
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return;
+      if (googleUser == null) return; // User canceled the sign-in
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -86,10 +92,11 @@ class _LoginScreenState extends State<LoginScreen> {
         final isAdmin = await firestoreService.isAdmin(user.uid);
         Navigator.pushReplacementNamed(
           context,
-          isAdmin ? AppRoutes.admin : AppRoutes.home,
+          isAdmin ? AppRoutes.admin : AppRoutes.main, // Navigate to MainScreen
         );
       }
     } catch (e) {
+      print('Google Sign-In error: $e');
       setState(() {
         errorMessage = 'Google Sign-In failed: $e';
       });
@@ -191,11 +198,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed:
-                        () => Navigator.pushNamed(
-                          context,
-                          AppRoutes.resetPasswordByPhone,
-                        ),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.resetPasswordByPhone,
+                      );
+                    },
                     child: Text(
                       'Forgot password?',
                       style: TextStyle(color: Color(0xFF083DED), fontSize: 14),
@@ -241,8 +249,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text("Don’t have an account?"),
                     TextButton(
-                      onPressed:
-                          () => Navigator.pushNamed(context, AppRoutes.signup),
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.signup);
+                      },
                       child: Text(
                         "Create now",
                         style: TextStyle(

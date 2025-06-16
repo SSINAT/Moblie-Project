@@ -17,6 +17,17 @@ class FirestoreService {
               snapshot.docs.map((doc) => doc.data()..['id'] = doc.id).toList(),
         );
   }
+   Future<List<Question>> getQuestions(String quizId) async {
+    final snapshot =
+        await _db
+            .collection('quizzes')
+            .doc(quizId)
+            .collection('questions')
+            .get();
+    return snapshot.docs
+        .map((doc) => Question.fromMap(doc.data()..['id'] = doc.id))
+        .toList();
+  }
 
   Future<void> deleteQuestion(
     String quizId,

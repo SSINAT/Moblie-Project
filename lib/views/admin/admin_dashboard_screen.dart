@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tic_quiz/models/question.dart';
 import 'package:tic_quiz/views/admin/add_question_screen.dart';
 import 'package:tic_quiz/views/admin/edit_question_screen.dart';
@@ -15,8 +16,39 @@ class AdminDashboardScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF083DED),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context, '/login');
+          onPressed: () async {
+            // Show confirmation dialog
+            final shouldLogout = await showDialog<bool>(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: const Text('Are you sure?'),
+                    content: const Text('Do you want to log out?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: const Text('Logout'),
+                      ),
+                    ],
+                  ),
+            );
+
+            // If user confirms logout
+            if (shouldLogout == true) {
+              try {
+                await FirebaseAuth.instance.signOut(); // Sign out from Firebase
+                // Navigate to Welcome screen, replacing the current route
+                Navigator.pushReplacementNamed(context, '/login');
+              } catch (e) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Logout failed: $e')));
+              }
+            }
           },
         ),
         actions: [
@@ -63,18 +95,18 @@ class AdminDashboardScreen extends StatelessWidget {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.visibility),
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Viewing: ${question['text']}',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                              // IconButton(
+                              //   icon: const Icon(Icons.visibility),
+                              //   onPressed: () {
+                              //     ScaffoldMessenger.of(context).showSnackBar(
+                              //       SnackBar(
+                              //         content: Text(
+                              //           'Viewing: ${question['text']}',
+                              //         ),
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {

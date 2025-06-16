@@ -15,7 +15,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CurvedNavigationBar(
       backgroundColor: Colors.white,
-      buttonBackgroundColor:const Color.fromARGB(255, 8, 0, 255),
+      buttonBackgroundColor: const Color.fromARGB(255, 8, 0, 255),
       color: const Color.fromARGB(255, 8, 0, 255),
       height: 75,
       animationDuration: const Duration(milliseconds: 300),

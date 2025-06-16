@@ -4,6 +4,7 @@ import 'package:tic_quiz/views/main_page.dart';
 import 'package:tic_quiz/views/welcome.dart';
 import 'package:tic_quiz/routes/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tic_quiz/services/firestore_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,24 +27,46 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Root extends StatelessWidget {
+class Root extends StatefulWidget {
   const Root({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+  State<Root> createState() => _RootState();
+}
+
+class _RootState extends State<Root> {
+  bool _isLoading = true;
+  final FirestoreService _firestoreService = FirestoreService();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthState();
+  }
+
+  Future<void> _checkAuthState() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final isAdmin = await _firestoreService.isAdmin(user.uid);
+        if (mounted) {
+          Navigator.pushReplacementNamed(
+            context,
+            isAdmin ? AppRoutes.admin : AppRoutes.main,
           );
         }
-        if (snapshot.hasData) {
-          return const MainScreen(); // Logged-in users go to MainScreen
-        }
-        return const Welcome(); // Logged-out users go to Welcome
-      },
-    );
+      } catch (e) {
+        print('Error checking admin status: $e');
+      }
+    } else {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading
+        ? const Scaffold(body: Center(child: CircularProgressIndicator()))
+        : const Welcome();
   }
 }

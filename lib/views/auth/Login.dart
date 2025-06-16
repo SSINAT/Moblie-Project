@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/routes/app_routes.dart';
 import 'package:tic_quiz/services/firestore_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,9 +19,25 @@ class _LoginScreenState extends State<LoginScreen> {
     text: 'adminticquiz',
   );
   bool isLoading = false;
+  String? errorMessage;
+  final _formKey = GlobalKey<FormState>();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  Future<void> login() async {
-    if (isLoading) return;
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return 'Email is required';
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value))
+      return 'Please enter a valid email';
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Password is required';
+    if (value.length < 6) return 'Password must be at least 6 characters';
+    return null;
+  }
+
+  Future<void> _login() async {
+    if (isLoading || !_formKey.currentState!.validate()) return;
     setState(() => isLoading = true);
     try {
       print('Attempting login with email: ${emailController.text.trim()}');
@@ -28,157 +45,216 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      print(
-        'Login successful for UID: ${FirebaseAuth.instance.currentUser?.uid}',
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login successful'),
-          backgroundColor: Colors.green,
-        ),
-      );
-
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final firestoreService = FirestoreService();
         final isAdmin = await firestoreService.isAdmin(user.uid);
-        print('Is Admin: $isAdmin');
         Navigator.pushReplacementNamed(
           context,
           isAdmin ? AppRoutes.admin : AppRoutes.home,
         );
       }
     } catch (e) {
-      print('Login error details: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Login failed: $e'),
-          backgroundColor: Colors.red,
-        ),
+      setState(() {
+        errorMessage =
+            e.toString().contains('user-not-found') ||
+                    e.toString().contains('wrong-password')
+                ? 'Invalid email or password'
+                : 'Login failed: $e';
+      });
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _loginWithGoogle() async {
+    if (isLoading) return;
+    setState(() => isLoading = true);
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final firestoreService = FirestoreService();
+        final isAdmin = await firestoreService.isAdmin(user.uid);
+        Navigator.pushReplacementNamed(
+          context,
+          isAdmin ? AppRoutes.admin : AppRoutes.home,
+        );
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Google Sign-In failed: $e';
+      });
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF083DED),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 50),
+                Center(child: Image.asset('assets/Logo.png', height: 100)),
+                const SizedBox(height: 40),
+                Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF083DED),
+                  ),
                 ),
-              ),
-              Text(
-                'Welcome to the Tic Quiz',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
+                Text(
+                  'Welcome to Tic Quiz',
+                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                 ),
-              ),
-              SizedBox(height: 24),
-              Text('Email'),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  hintText: 'hello@example.com',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 16),
-              Text('Password'),
-              TextField(
-                obscureText: true,
-                controller: passwordController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.visibility_off),
-                ),
-              ),
-              SizedBox(height: 16),
-              isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                    onPressed: login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF083DED),
-                      minimumSize: Size(double.infinity, 50),
+                const SizedBox(height: 40),
+                Text('Email', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextFormField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    hintText: 'hello@example.com',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text('Login', style: TextStyle(color: Colors.white)),
+                    errorText: errorMessage,
                   ),
-              SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.resetPasswordByPhone,
-                    );
-                  },
-                  child: Text(
-                    'Forgot password?',
-                    style: TextStyle(color: Color(0xFF083DED)),
-                  ),
+                  validator: _validateEmail,
+                  keyboardType: TextInputType.emailAddress,
                 ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(child: Divider(thickness: 1)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text('or continue with'),
+                const SizedBox(height: 16),
+                Text('Password', style: TextStyle(fontWeight: FontWeight.bold)),
+                TextFormField(
+                  obscureText: true,
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    suffixIcon: Icon(Icons.visibility_off, color: Colors.grey),
                   ),
-                  Expanded(child: Divider(thickness: 1)),
+                  validator: _validatePassword,
+                ),
+                if (errorMessage != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    errorMessage!,
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
                 ],
-              ),
-              SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: () {},
-                icon: Image.asset('assets/google.png', height: 24),
-                label: const Text(
-                  'Google',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[300],
-                  foregroundColor: Colors.black,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 0,
-                ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don’t have an account?"),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.signup);
-                    },
+                const SizedBox(height: 16),
+                isLoading
+                    ? Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF083DED),
+                      ),
+                    )
+                    : ElevatedButton(
+                      onPressed: _login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF083DED),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed:
+                        () => Navigator.pushNamed(
+                          context,
+                          AppRoutes.resetPasswordByPhone,
+                        ),
                     child: Text(
-                      "Create now",
-                      style: TextStyle(color: Color(0xFF083DED)),
+                      'Forgot password?',
+                      style: TextStyle(color: Color(0xFF083DED), fontSize: 14),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        'or continue with',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: _loginWithGoogle,
+                  icon: Image.asset('assets/google.png', height: 24),
+                  label: const Text(
+                    'Sign in with Google',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size(double.infinity, 50),
+                    side: BorderSide(color: Colors.grey),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don’t have an account?"),
+                    TextButton(
+                      onPressed:
+                          () => Navigator.pushNamed(context, AppRoutes.signup),
+                      child: Text(
+                        "Create now",
+                        style: TextStyle(
+                          color: Color(0xFF083DED),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

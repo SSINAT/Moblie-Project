@@ -239,12 +239,12 @@ class _RegisterScreen extends State<Register> {
                 } 
               },
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 40),
+                minimumSize: Size(double.infinity, 50),
                 backgroundColor: const Color.fromARGB(255, 43, 6, 253),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                    10,
+                    20,
                   ), // Set border radius for button
                 ),
               ),

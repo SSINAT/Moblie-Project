@@ -4,37 +4,35 @@ import 'package:flutter/material.dart';
 
 // final user = FirebaseAuth.instance.currentUser;
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
-
-
-  
 }
-
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   bool _showCurrent = true;
   User? user;
   String userName = '';
+  List<Map<String, dynamic>> historyData = [];
 
- @override
+  @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
     fetchUserData();
+    fetchQuizHistory();
   }
 
   Future<void> fetchUserData() async {
     if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .get();
 
       setState(() {
         userName = userDoc['name'] ?? '';
@@ -42,7 +40,46 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> fetchQuizHistory() async {
+    try {
+      if (user != null) {
+        // print('Fetching quiz history for user: ${user!.uid}');
+        final attemptsSnapshot =
+            await FirebaseFirestore.instance
+               .collection('scores')
+                .where('userId', isEqualTo: user!.uid)
+                .orderBy('timestamp', descending: true)
+                .get();
+      // print('Documents found: ${attemptsSnapshot.docs.length}');
+       final List<Map<String, dynamic>> loadedHistory =
+        attemptsSnapshot.docs.map((doc) {
+          final data = doc.data();
+          // print('Document ID: ${doc.id}, Data: $data'); // Debug raw data
+          final timestamp = data['timestamp'];
+          return {
+            'date': timestamp is Timestamp
+                ? timestamp.toDate().toString()
+                : 'No date',
+            'score': data['score'] != null ? '${data['score']}/50' : 'N/A',
+          };
+        }).toList();
+       
 
+        if (mounted) {
+          setState(() {
+            historyData = loadedHistory;
+          });
+        //  print('Loaded history: $loadedHistory');
+        }
+      }
+    } catch (e) {
+      // print('Error fetching quiz history: $e');
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Failed to fetch quiz history: $e')),
+      // );
+      // Handle error appropriately, e.g., show a snackbar or dialog
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -56,18 +93,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // History quiz attempts data
-  final List<Map<String, dynamic>> historyData = [
-    {'date': '12/01/2025', 'score': '10/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +100,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(backgroundColor: Colors.white, elevation: 0),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 56.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,10 +209,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 20),
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(10),
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: const Color(0xFFFEF0D1),
                           borderRadius: BorderRadius.circular(12),
+                          
                         ),
                         child:
                             _showCurrent
@@ -246,22 +273,24 @@ class _HomePageState extends State<HomePage> {
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
-                                              children: const [
+                                              children: [
                                                 Text(
-                                                  '40',
-                                                  style: TextStyle(
+                                                  historyData.isNotEmpty
+                                                      ? historyData[0]['score']
+                                                      : '0',
+                                                  style: const TextStyle(
                                                     fontSize: 24,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                Text(
+                                                const Text(
                                                   '/50',
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                     color: Colors.black54,
                                                   ),
                                                 ),
-                                                Text(
+                                                const Text(
                                                   'quiz played',
                                                   style: TextStyle(
                                                     fontSize: 12,
@@ -331,7 +360,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 15),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildCategoryItem(
                     'C++',

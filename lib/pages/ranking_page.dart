@@ -27,7 +27,7 @@ class _RankingScreenState extends State<RankingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xFF3949AB),
+        color: Color.fromARGB(255, 25, 0, 255),
         child: SafeArea(
           child: Column(
             children: [
@@ -59,7 +59,7 @@ class _RankingScreenState extends State<RankingPage> {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 225, 130, 35)),
             onPressed: () => Navigator.pop(context),
           ),
           Expanded(
@@ -132,13 +132,13 @@ class _RankingScreenState extends State<RankingPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               // Second place
-              _buildPodiumItem(second, 2, Colors.indigo.shade300, 160),
+              _buildPodiumItem(second, 2, Colors.indigo.shade300, 80),
               
               // First place
-              _buildPodiumItem(first, 1, Colors.orange, 200),
+              _buildPodiumItem(first, 1, Colors.orange, 100),
               
               // Third place
-              _buildPodiumItem(third, 3, Colors.indigo.shade300, 120),
+              _buildPodiumItem(third, 3, Colors.indigo.shade300, 60),
             ],
           ),
         );
@@ -155,7 +155,7 @@ class _RankingScreenState extends State<RankingPage> {
             radius: 30,
             backgroundImage: user.photoUrl.isNotEmpty
                 ? NetworkImage(user.photoUrl)
-                : AssetImage('assets/images/avatar.png') as ImageProvider,
+                : AssetImage('assets/images/avatar.svg') as ImageProvider,
             backgroundColor: Colors.white,
           ),
           SizedBox(height: 8),

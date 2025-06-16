@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/main_page.dart';
 import 'package:tic_quiz/pages/register.dart';
+import 'package:tic_quiz/pages/reset_password_email.dart';
+import 'package:tic_quiz/pages/reset_password_phone.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -97,7 +99,14 @@ class LoginScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResetPasswordByEmail(),
+                      ),
+                    );
+                  },
                   child: Text(
                     'Forgot password?',
                     style: TextStyle(color: Color(0xFF083DED)),

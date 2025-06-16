@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/pages/Login.dart';
-import 'package:tic_quiz/pages/reset_password_email.dart';
-import 'package:tic_quiz/pages/verification.dart';
+import 'package:tic_quiz/views/auth/Login.dart';
+import 'package:tic_quiz/views/auth/reset_password_email.dart';
+import 'package:tic_quiz/views/auth/verification.dart';
 
 class ResetPasswordByPhone extends StatefulWidget {
   const ResetPasswordByPhone({super.key});

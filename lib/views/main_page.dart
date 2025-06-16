@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/pages/home_page.dart';
-import 'package:tic_quiz/pages/quiz_page.dart';
-import 'package:tic_quiz/pages/ranking_page.dart';
-import 'package:tic_quiz/pages/profile_page.dart';
+import 'package:tic_quiz/views/home_page.dart';
+import 'package:tic_quiz/views/quiz_page.dart';
+import 'package:tic_quiz/views/ranking_page.dart';
+import 'package:tic_quiz/views/profile_page.dart';
 import 'package:tic_quiz/shared/bottom_nav_bar.dart';
 
 class MainScreen extends StatefulWidget {

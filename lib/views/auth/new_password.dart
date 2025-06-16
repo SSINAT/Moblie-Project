@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/pages/Login.dart';
-import 'package:tic_quiz/pages/reset_password_phone.dart';
-import 'package:tic_quiz/pages/verification.dart';
+import 'package:tic_quiz/views/auth/Login.dart';
 
-class ResetPasswordByEmail extends StatefulWidget {
-  const ResetPasswordByEmail({super.key});
+
+class NewPassword extends StatefulWidget {
+  const NewPassword({super.key});
   @override
-  _resetPassword createState() => _resetPassword();
+  _newPassword createState() => _newPassword();
 }
 
-class _resetPassword extends State<ResetPasswordByEmail> {
+class _newPassword extends State<NewPassword> {
   bool _obscurePassword = true;
 
   @override
@@ -22,14 +21,14 @@ class _resetPassword extends State<ResetPasswordByEmail> {
 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 100),
             Column(
               children: [
                 Center(
                   child: Text(
-                    "Recover Password",
+                    "New Password",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 40,
@@ -43,8 +42,9 @@ class _resetPassword extends State<ResetPasswordByEmail> {
             ),
 
             SizedBox(height: 10),
+
             Text(
-              "Enter your email here",
+              "Enter new password",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -53,8 +53,43 @@ class _resetPassword extends State<ResetPasswordByEmail> {
             ),
             SizedBox(height: 5),
             TextField(
+              obscureText: _obscurePassword,
               decoration: InputDecoration(
-                hintText: "Example: example@gmail.com",
+                hintText: 'new password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide(
+                    color: const Color.fromARGB(128, 211, 211, 211),
+                    width: 0.2,
+                  ),
+                ),
+
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Confirm New Password",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromARGB(255, 48, 45, 45),
+              ),
+            ),
+            SizedBox(height: 5),
+            TextField(
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'Confirm your password',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(
@@ -69,7 +104,7 @@ class _resetPassword extends State<ResetPasswordByEmail> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => VerificationPassword()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -84,23 +119,7 @@ class _resetPassword extends State<ResetPasswordByEmail> {
               ),
               child: Text('Send Now', style: TextStyle(fontSize: 16)),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ResetPasswordByPhone()),
-                );
-              },
-              child: Text(
-                "Use email phone number",
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 65, 64, 67),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
+           
             SizedBox(height: 80),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

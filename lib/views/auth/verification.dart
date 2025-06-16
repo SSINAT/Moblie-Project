@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:tic_quiz/pages/Login.dart';
-import 'package:tic_quiz/pages/new_password.dart';
-import 'package:tic_quiz/pages/reset_password_phone.dart';
+import 'package:tic_quiz/views/auth/Login.dart';
+import 'package:tic_quiz/views/auth/new_password.dart';
+import 'package:tic_quiz/views/auth/reset_password_phone.dart';
 
 class VerificationPassword extends StatefulWidget {
   const VerificationPassword({super.key});

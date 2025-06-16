@@ -1,35 +1,63 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/pages/main_page.dart';
-import 'package:tic_quiz/pages/register.dart';
-import 'package:tic_quiz/pages/reset_password_phone.dart';
+import 'package:tic_quiz/routes/app_routes.dart';
+import 'package:tic_quiz/services/firestore_service.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
-  LoginScreen({super.key});
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
-  Future<void> login(BuildContext context) async {
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController(
+    text: 'admin@gmail.com',
+  );
+  final TextEditingController passwordController = TextEditingController(
+    text: 'adminticquiz',
+  );
+  bool isLoading = false;
+
+  Future<void> login() async {
+    if (isLoading) return;
+    setState(() => isLoading = true);
     try {
+      print('Attempting login with email: ${emailController.text.trim()}');
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
+      print(
+        'Login successful for UID: ${FirebaseAuth.instance.currentUser?.uid}',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Login successful'),
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
-      );
+
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final firestoreService = FirestoreService();
+        final isAdmin = await firestoreService.isAdmin(user.uid);
+        print('Is Admin: $isAdmin');
+        Navigator.pushReplacementNamed(
+          context,
+          isAdmin ? AppRoutes.admin : AppRoutes.home,
+        );
+      }
     } catch (e) {
+      print('Login error details: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Login failed: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
@@ -79,31 +107,24 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => MainScreen()),
-                  // );
-                  login(context);
-
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF083DED),
-                  minimumSize: Size(double.infinity, 50),
-                ),
-                child: Text('Login', style: TextStyle(color: Colors.white)),
-              ),
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                    onPressed: login,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF083DED),
+                      minimumSize: Size(double.infinity, 50),
+                    ),
+                    child: Text('Login', style: TextStyle(color: Colors.white)),
+                  ),
               SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => ResetPasswordByPhone(),
-                      ),
+                      AppRoutes.resetPasswordByPhone,
                     );
                   },
                   child: Text(
@@ -148,10 +169,7 @@ class LoginScreen extends StatelessWidget {
                   Text("Don’t have an account?"),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Register()),
-                      );
+                      Navigator.pushNamed(context, AppRoutes.signup);
                     },
                     child: Text(
                       "Create now",

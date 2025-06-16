@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/home_page.dart';
+import 'package:tic_quiz/pages/quiz/start_page.dart';
 import 'package:tic_quiz/pages/quiz_page.dart';
 import 'package:tic_quiz/pages/ranking_page.dart';
 import 'package:tic_quiz/pages/profile_page.dart';
@@ -17,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const QuizPage(),
+    const StartQuizPage(),
     const RankingPage(),
     ProfilePage(),
   ];

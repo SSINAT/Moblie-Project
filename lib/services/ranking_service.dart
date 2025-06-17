@@ -13,19 +13,20 @@ class RankingService {
         .limit(50)
         .snapshots()
         .map((snapshot) {
-      List<UserRanking> rankings = [];
-      int rank = 1;
-      for (var doc in snapshot.docs) {
-        final data = doc.data();
-        data['uid'] = doc.id;
-        rankings.add(UserRanking.fromMap(data, rank));
-        rank++;
-      }
-      return rankings;
-    }).handleError((e) {
-      print('Error getting rankings: $e');
-      return [];
-    });
+          List<UserRanking> rankings = [];
+          int rank = 1;
+          for (var doc in snapshot.docs) {
+            final data = doc.data();
+            data['uid'] = doc.id;
+            rankings.add(UserRanking.fromMap(data, rank));
+            rank++;
+          }
+          return rankings;
+        })
+        .handleError((e) {
+          print('Error getting rankings: $e');
+          return [];
+        });
   }
 
   Future<UserRanking?> getCurrentUserRanking() async {
@@ -40,11 +41,12 @@ class RankingService {
       userData['uid'] = userId;
       final userPoints = userData['points'] ?? 0;
 
-      final higherRankedUsers = await _firestore
-          .collection('users')
-          .where('points', isGreaterThan: userPoints)
-          .count()
-          .get();
+      final higherRankedUsers =
+          await _firestore
+              .collection('users')
+              .where('points', isGreaterThan: userPoints)
+              .count()
+              .get();
 
       final rank = higherRankedUsers.count! + 1;
 

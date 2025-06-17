@@ -30,10 +30,12 @@ Future<bool> registerUser({
     await user?.updateDisplayName(name);
 
     // Save additional user info in Firestore
+   String role = (email == 'admin@gmail.com') ? 'admin' : 'user';
     await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
       'uid': user.uid,
       'email': email,
       'name': name,
+      'role': role,
       'createdAt': Timestamp.now(),
     });
 

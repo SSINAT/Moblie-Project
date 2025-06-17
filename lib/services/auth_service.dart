@@ -131,4 +131,12 @@ class AuthService {
       print('Error updating user data: $e');
     }
   }
+
+  Future<void> resetPasswordwithEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print('Error sending password reset email: $e');
+    }
+  }
 }

@@ -41,7 +41,7 @@ class AppRoutes {
   static final Map<String, WidgetBuilder> routes = {
     welcome: (context) => const Welcome(),
     home: (context) => const HomePage(), // Maps to Welcome as the home screen
-    login: (context) => const LoginScreen(),
+    login: (context) =>  LoginScreen(),
     signup: (context) => const Register(),
     resetPasswordByPhone: (context) => const ResetPasswordByPhone(),
     resetPasswordByEmail: (context) => const ResetPasswordByEmail(),

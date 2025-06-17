@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_ranking.dart';
 import '../services/ranking_service.dart';
 
@@ -28,18 +26,14 @@ class _RankingScreenState extends State<RankingPage> {
         MediaQuery.of(context).padding.top +
         MediaQuery.of(context).padding.bottom;
     final availableHeight =
-        screenHeight -
-        safePadding -
-        kBottomNavigationBarHeight; // Approx 56 for BottomNavBar
+        screenHeight - safePadding - kBottomNavigationBarHeight;
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 25, 0, 255),
       body: Column(
         children: [
           _buildHeader(),
-          _buildTopThree(
-            availableHeight * 0.3,
-          ), // Dynamic height based on screen
+          _buildTopThree(availableHeight * 0.3),
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
@@ -119,7 +113,7 @@ class _RankingScreenState extends State<RankingPage> {
               uid: 'placeholder-${topThree.length}',
               name: 'N/A',
               photoUrl: '',
-              points: 0,
+              stars: 0, // Changed from points to stars
               rank: topThree.length + 1,
             ),
           );
@@ -141,19 +135,14 @@ class _RankingScreenState extends State<RankingPage> {
                 2,
                 Colors.indigo.shade300,
                 maxHeight * 0.36,
-              ), // Adjusted proportionally
-              _buildPodiumItem(
-                first,
-                1,
-                Colors.orange,
-                maxHeight * 0.45,
-              ), // Adjusted proportionally
+              ),
+              _buildPodiumItem(first, 1, Colors.orange, maxHeight * 0.45),
               _buildPodiumItem(
                 third,
                 3,
                 Colors.indigo.shade300,
                 maxHeight * 0.27,
-              ), // Adjusted proportionally
+              ),
             ],
           ),
         );
@@ -195,7 +184,7 @@ class _RankingScreenState extends State<RankingPage> {
               const Icon(Icons.circle, color: Colors.white, size: 16),
               const SizedBox(width: 4),
               Text(
-                _formatPoints(user.points),
+                _formatStars(user.stars), // Changed from points to stars
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -303,7 +292,7 @@ class _RankingScreenState extends State<RankingPage> {
             const Icon(Icons.circle, color: Colors.grey, size: 16),
             const SizedBox(width: 4),
             Text(
-              _formatPoints(ranking.points),
+              _formatStars(ranking.stars), // Changed from points to stars
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
@@ -312,14 +301,14 @@ class _RankingScreenState extends State<RankingPage> {
     );
   }
 
-  String _formatPoints(int points) {
-    if (points >= 1000) {
-      final thousands = points / 1000;
+  String _formatStars(int stars) {
+    // Changed from _formatPoints to _formatStars
+    if (stars >= 1000) {
+      final thousands = stars / 1000;
       return '${thousands.toStringAsFixed(1)}k';
     }
-    return points.toString();
+    return stars.toString();
   }
 }
 
-const double kBottomNavigationBarHeight =
-    56.0; // Approximate height of BottomNavBar
+const double kBottomNavigationBarHeight = 56.0;

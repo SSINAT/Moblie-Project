@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tic_quiz/screen/auth/Login.dart';
 import 'package:tic_quiz/screen/auth/reset_password_phone.dart';
 
-import 'package:tic_quiz/screen/auth/verification.dart';
+import 'package:tic_quiz/services/auth_service.dart';
 
 class ResetPasswordByEmail extends StatefulWidget {
   const ResetPasswordByEmail({super.key});
@@ -12,6 +12,7 @@ class ResetPasswordByEmail extends StatefulWidget {
 
 class _resetPassword extends State<ResetPasswordByEmail> {
   bool _obscurePassword = true;
+  TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +55,7 @@ class _resetPassword extends State<ResetPasswordByEmail> {
             ),
             SizedBox(height: 5),
             TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 hintText: "Example: example@gmail.com",
                 border: OutlineInputBorder(
@@ -67,11 +69,39 @@ class _resetPassword extends State<ResetPasswordByEmail> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => VerificationPassword()),
-                );
+              onPressed: () async {
+                String email = emailController.text.trim();
+
+                if (email.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please enter your email')),
+                  );
+                  return;
+                }
+
+                try {
+                  await AuthService().resetPasswordwithEmail(email);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Password reset email sent to $email please check your inbox !',
+                      ),
+                    ),
+                  );
+
+                  // Navigate only after successful reset email is sent
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to send password reset email'),
+                    ),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
@@ -89,11 +119,13 @@ class _resetPassword extends State<ResetPasswordByEmail> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ResetPasswordByPhone()),
+                  MaterialPageRoute(
+                    builder: (context) => ResetPasswordByPhone(),
+                  ),
                 );
               },
               child: Text(
-                "Use email phone number",
+                "Use phone number",
                 style: TextStyle(
                   color: const Color.fromARGB(255, 65, 64, 67),
                   fontSize: 16,

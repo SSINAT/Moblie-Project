@@ -15,12 +15,20 @@ class WinPage extends StatelessWidget {
         title: 'Congratulations!',
         score: score ?? 0,
         message: 'You scored',
-        buttonText: 'Play Again',
-        onButtonPressed: () => Navigator.pushReplacementNamed(
+        playAgainButtonText: 'Play Again',
+        homeButtonText: 'Home',
+        onPlayAgainPressed: () => Navigator.pushReplacementNamed(
           context,
-          AppRoutes.startQuiz,
+          AppRoutes.main,
+          arguments: 1, // Set index to StartQuizPage
+        ),
+        onHomePressed: () => Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.main,
+          arguments: 0, // Set index to HomePage
         ),
       ),
     );
   }
 }
+

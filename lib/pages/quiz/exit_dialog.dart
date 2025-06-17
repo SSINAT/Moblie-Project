@@ -1,5 +1,6 @@
 // exit_dialog.dart
 import 'package:flutter/material.dart';
+import 'package:tic_quiz/routes/app_routes.dart';
 
 class ExitDialog extends StatelessWidget {
   @override
@@ -13,7 +14,7 @@ class ExitDialog extends StatelessWidget {
           child: Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: () => Navigator.pushReplacementNamed(context, '/startQuiz'),
+          onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.startQuiz),
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
           child: Text('Exit', style: TextStyle(color: Colors.white)),
         )

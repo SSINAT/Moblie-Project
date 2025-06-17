@@ -29,9 +29,9 @@ class StartQuizPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quiz Time'),
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false, // Remove the back arrow
       ),
-      backgroundColor: Colors.white, // Light purple background
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -67,7 +67,7 @@ class StartQuizPage extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(context, AppRoutes.quizPage),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(200, 60),
-                  backgroundColor: Colors.purple[700],
+                  backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

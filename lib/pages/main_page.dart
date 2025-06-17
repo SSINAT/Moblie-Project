@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tic_quiz/pages/home_page.dart';
 import 'package:tic_quiz/pages/quiz/start_page.dart';
-import 'package:tic_quiz/pages/quiz_page.dart';
+
 import 'package:tic_quiz/pages/ranking_page.dart';
 import 'package:tic_quiz/pages/profile_page.dart';
 import 'package:tic_quiz/shared/bottom_nav_bar.dart';

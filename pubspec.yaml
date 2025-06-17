@@ -19,6 +19,9 @@ dependencies:
   provider: ^6.1.5
   firebase_messaging: ^15.2.5
   flutter_local_notifications: ^19.2.1
+  permission_handler: ^11.0.0  # Updated to a version supporting v2 embedding
+  image_picker: ^1.0.0
+  firebase_storage: ^12.4.5
 
 dev_dependencies:
   flutter_test:

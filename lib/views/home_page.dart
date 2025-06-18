@@ -322,19 +322,14 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildCategoryItem(
-                  'C++',
-                  Colors.green,
-                  'assets/cpp_logo.png',
-                  () {
-                    print('C++ category tapped');
-                    // Add navigation logic for C++ category
-                  },
-                ),
+                _buildCategoryItem('C++', Colors.green, 'assets/cpp.png', () {
+                  print('C++ category tapped');
+                  // Add navigation logic for C++ category
+                }),
                 _buildCategoryItem(
                   'Java',
                   Colors.blue[300]!,
-                  'assets/java_logo.png',
+                  'assets/java.png',
                   () {
                     print('Java category tapped');
                     // Add navigation logic for Java category
@@ -343,7 +338,7 @@ class _HomePageState extends State<HomePage> {
                 _buildCategoryItem(
                   'HTML',
                   Colors.orange,
-                  'assets/html_logo.png',
+                  'assets/html.png',
                   () {
                     print('HTML category tapped');
                     // Add navigation logic for HTML category
@@ -352,7 +347,7 @@ class _HomePageState extends State<HomePage> {
                 _buildCategoryItem(
                   'Python',
                   Colors.blue,
-                  'assets/python_logo.png',
+                  'assets/python.png',
                   () {
                     print('Python category tapped');
                     // Add navigation logic for Python category
@@ -383,7 +378,7 @@ class _HomePageState extends State<HomePage> {
               color: color.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Center(child: _getCategoryImage(title, color)),
+            child: Center(child: _getCategoryImage(title, imagePath)),
           ),
           const SizedBox(height: 8),
           Text(
@@ -395,43 +390,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _getCategoryImage(String category, Color color) {
-    // Using custom widgets that resemble the programming language logos
+  Widget _getCategoryImage(String category, String imagePath) {
+    // Using PNG assets for programming language logos
+    return Image.asset(
+      imagePath,
+      width: 30,
+      height: 30,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        // Fallback to icon if image fails to load
+        return Icon(
+          _getCategoryIcon(category),
+          size: 30,
+          color: _getCategoryColor(category),
+        );
+      },
+    );
+  }
+
+  Color _getCategoryColor(String category) {
     switch (category) {
       case 'C++':
-        return Container(
-          padding: const EdgeInsets.all(8),
-          child: CustomPaint(
-            size: const Size(30, 30),
-            painter: CPlusPlusPainter(color),
-          ),
-        );
+        return Colors.green;
       case 'Java':
-        return Container(
-          padding: const EdgeInsets.all(8),
-          child: CustomPaint(
-            size: const Size(30, 30),
-            painter: JavaPainter(color),
-          ),
-        );
+        return Colors.blue[300]!;
       case 'HTML':
-        return Container(
-          padding: const EdgeInsets.all(5),
-          child: CustomPaint(
-            size: const Size(30, 30),
-            painter: HTMLPainter(Colors.orange),
-          ),
-        );
+        return Colors.orange;
       case 'Python':
-        return Container(
-          padding: const EdgeInsets.all(5),
-          child: CustomPaint(
-            size: const Size(30, 30),
-            painter: PythonPainter(Colors.blue),
-          ),
-        );
+        return Colors.blue;
       default:
-        return Icon(Icons.code, color: color, size: 30);
+        return Colors.grey;
     }
   }
 
@@ -449,222 +437,4 @@ class _HomePageState extends State<HomePage> {
         return Icons.category;
     }
   }
-}
-
-// Custom painters for programming language logos
-class CPlusPlusPainter extends CustomPainter {
-  final Color color;
-
-  CPlusPlusPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill;
-
-    // Draw C++
-    final textStyle = TextStyle(
-      color: color,
-      fontSize: size.height * 0.8,
-      fontWeight: FontWeight.bold,
-    );
-    final textSpan = TextSpan(text: 'C++', style: textStyle);
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout(minWidth: 0, maxWidth: size.width);
-    textPainter.paint(
-      canvas,
-      Offset(
-        size.width / 2 - textPainter.width / 2,
-        size.height / 2 - textPainter.height / 2,
-      ),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class JavaPainter extends CustomPainter {
-  final Color color;
-
-  JavaPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2;
-
-    // Draw coffee cup
-    final cup =
-        Path()
-          ..moveTo(size.width * 0.3, size.height * 0.3)
-          ..lineTo(size.width * 0.3, size.height * 0.7)
-          ..lineTo(size.width * 0.7, size.height * 0.7)
-          ..lineTo(size.width * 0.7, size.height * 0.3);
-
-    // Handle
-    final handle =
-        Path()
-          ..moveTo(size.width * 0.7, size.height * 0.4)
-          ..quadraticBezierTo(
-            size.width * 0.9,
-            size.height * 0.4,
-            size.width * 0.9,
-            size.height * 0.5,
-          )
-          ..quadraticBezierTo(
-            size.width * 0.9,
-            size.height * 0.6,
-            size.width * 0.7,
-            size.height * 0.6,
-          );
-
-    // Steam
-    final steam =
-        Path()
-          ..moveTo(size.width * 0.4, size.height * 0.3)
-          ..quadraticBezierTo(
-            size.width * 0.4,
-            size.height * 0.1,
-            size.width * 0.5,
-            size.height * 0.1,
-          )
-          ..quadraticBezierTo(
-            size.width * 0.6,
-            size.height * 0.1,
-            size.width * 0.6,
-            size.height * 0.3,
-          );
-
-    canvas.drawPath(cup, paint);
-    canvas.drawPath(handle, paint);
-    canvas.drawPath(steam, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class HTMLPainter extends CustomPainter {
-  final Color color;
-
-  HTMLPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill;
-
-    // Draw simplified HTML5 shield
-    final path =
-        Path()
-          ..moveTo(size.width * 0.1, 0)
-          ..lineTo(size.width * 0.9, 0)
-          ..lineTo(size.width * 0.8, size.height)
-          ..lineTo(size.width * 0.5, size.height * 0.9)
-          ..lineTo(size.width * 0.2, size.height)
-          ..close();
-
-    canvas.drawPath(path, paint);
-
-    // Draw "5" in white
-    final textStyle = TextStyle(
-      color: Colors.white,
-      fontSize: size.height * 0.5,
-      fontWeight: FontWeight.bold,
-    );
-    final textSpan = TextSpan(text: '5', style: textStyle);
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout(minWidth: 0, maxWidth: size.width);
-    textPainter.paint(
-      canvas,
-      Offset(
-        size.width / 2 - textPainter.width / 2,
-        size.height / 2 - textPainter.height / 2,
-      ),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class PythonPainter extends CustomPainter {
-  final Color color;
-
-  PythonPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill;
-
-    // Python logo (simplified as two snakes)
-    final path1 =
-        Path()
-          ..moveTo(size.width * 0.3, size.height * 0.1)
-          ..quadraticBezierTo(
-            size.width * 0.1,
-            size.height * 0.2,
-            size.width * 0.3,
-            size.height * 0.4,
-          )
-          ..quadraticBezierTo(
-            size.width * 0.5,
-            size.height * 0.6,
-            size.width * 0.3,
-            size.height * 0.8,
-          )
-          ..quadraticBezierTo(
-            size.width * 0.1,
-            size.height * 0.9,
-            size.width * 0.3,
-            size.height,
-          );
-
-    final path2 =
-        Path()
-          ..moveTo(size.width * 0.7, size.height)
-          ..quadraticBezierTo(
-            size.width * 0.9,
-            size.height * 0.8,
-            size.width * 0.7,
-            size.height * 0.6,
-          )
-          ..quadraticBezierTo(
-            size.width * 0.5,
-            size.height * 0.4,
-            size.width * 0.7,
-            size.height * 0.2,
-          )
-          ..quadraticBezierTo(
-            size.width * 0.9,
-            size.height * 0.1,
-            size.width * 0.7,
-            0,
-          );
-
-    canvas.drawPath(path1, paint);
-
-    paint.color = Colors.yellow;
-    canvas.drawPath(path2, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

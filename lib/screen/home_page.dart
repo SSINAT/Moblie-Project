@@ -2,17 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-// final user = FirebaseAuth.instance.currentUser;
-
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
-
-
-  
 }
 
 class _HomePageState extends State<HomePage> {
@@ -20,28 +14,73 @@ class _HomePageState extends State<HomePage> {
   bool _showCurrent = true;
   User? user;
   String userName = '';
+  List<Map<String, dynamic>> historyData = [];
 
- @override
+  @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser;
-    fetchUserData();
+    _fetchUserData();
+    _fetchQuizHistory();
+    FirebaseAuth.instance.authStateChanges().listen((User? currentUser) {
+      if (currentUser != null && mounted) {
+        setState(() {
+          user = currentUser;
+          _fetchUserData();
+        });
+      }
+    });
   }
 
-  Future<void> fetchUserData() async {
+  Future<void> _fetchUserData() async {
     if (user != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
-
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .get();
       setState(() {
-        userName = userDoc['name'] ?? '';
+        userName =
+            userDoc['name'] ??
+            user!.displayName ??
+            user!.email?.split('@')[0] ??
+            'Unknown';
       });
     }
   }
 
+  Future<void> _fetchQuizHistory() async {
+    try {
+      if (user != null) {
+        final attemptsSnapshot =
+            await FirebaseFirestore.instance
+                .collection('scores')
+                .where('userId', isEqualTo: user!.uid)
+                .orderBy('timestamp', descending: true)
+                .get();
+        final List<Map<String, dynamic>> loadedHistory =
+            attemptsSnapshot.docs.map((doc) {
+              final data = doc.data();
+              final timestamp = data['timestamp'];
+              return {
+                'date':
+                    timestamp is Timestamp
+                        ? timestamp.toDate().toString()
+                        : 'No date',
+                'score': data['score'] != null ? '${data['score']}/100' : 'N/A',
+              };
+            }).toList();
 
+        if (mounted) {
+          setState(() {
+            historyData = loadedHistory;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching quiz history: $e');
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -55,26 +94,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // History quiz attempts data
-  final List<Map<String, dynamic>> historyData = [
-    {'date': '12/01/2025', 'score': '10/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-    {'date': '12/01/2025', 'score': '20/50'},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.white, elevation: 0),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 56.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,18 +123,19 @@ class _HomePageState extends State<HomePage> {
                                 backgroundColor: Colors.black,
                                 radius: 20,
                                 child: Image.network(
-                                  'https://via.placeholder.com/40',
+                                  user?.photoURL ??
+                                      'https://via.placeholder.com/40',
                                   errorBuilder:
                                       (context, error, stackTrace) =>
                                           const Icon(
                                             Icons.person,
-                                            color: Colors.white,
+                                            color: Color.fromARGB(255, 157, 16, 16),
                                           ),
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                userName ?? 'Guest',
+                                userName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -123,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 20),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.blue[300],
+                          color: const Color.fromARGB(255, 70, 51, 236),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Row(
@@ -139,10 +165,20 @@ class _HomePageState extends State<HomePage> {
                                   decoration: BoxDecoration(
                                     color:
                                         _showCurrent
-                                            ? Colors.blue
-                                            : Colors.blue[300],
+                                            ? const Color.fromARGB(
+                                              255,
+                                              51,
+                                              3,
+                                              244,
+                                            )
+                                            : const Color.fromARGB(
+                                              255,
+                                              70,
+                                              51,
+                                              236,
+                                            ),
                                     borderRadius: BorderRadius.circular(10),
-                                  ), 
+                                  ),
                                   child: const Text(
                                     'Current',
                                     style: TextStyle(
@@ -164,8 +200,18 @@ class _HomePageState extends State<HomePage> {
                                   decoration: BoxDecoration(
                                     color:
                                         !_showCurrent
-                                            ? Colors.blue
-                                            : Colors.blue[300],
+                                            ? const Color.fromARGB(
+                                              255,
+                                              22,
+                                              6,
+                                              238,
+                                            )
+                                            : const Color.fromARGB(
+                                              255,
+                                              70,
+                                              51,
+                                              236,
+                                            ),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: const Text(
@@ -183,16 +229,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 20),
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(10),
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: const Color(0xFFFEF0D1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child:
                             _showCurrent
-                                ?
-                                // Current view with progress circle
-                                Column(
+                                ? Column(
                                   children: [
                                     RichText(
                                       textAlign: TextAlign.center,
@@ -245,22 +290,24 @@ class _HomePageState extends State<HomePage> {
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
-                                              children: const [
+                                              children: [
                                                 Text(
-                                                  '40',
-                                                  style: TextStyle(
+                                                  historyData.isNotEmpty
+                                                      ? historyData[0]['score']
+                                                      : '0',
+                                                  style: const TextStyle(
                                                     fontSize: 24,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                Text(
+                                                const Text(
                                                   '/50',
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                     color: Colors.black54,
                                                   ),
                                                 ),
-                                                Text(
+                                                const Text(
                                                   'quiz played',
                                                   style: TextStyle(
                                                     fontSize: 12,
@@ -275,9 +322,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 )
-                                :
-                                // History view with list of attempts
-                                Column(
+                                : Column(
                                   children: [
                                     ...historyData.map(
                                       (item) => Container(
@@ -330,7 +375,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 15),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildCategoryItem(
                     'C++',
@@ -338,7 +383,6 @@ class _HomePageState extends State<HomePage> {
                     'assets/cpp_logo.png',
                     () {
                       print('C++ category tapped');
-                      // Add navigation logic for C++ category
                     },
                   ),
                   _buildCategoryItem(
@@ -347,7 +391,6 @@ class _HomePageState extends State<HomePage> {
                     'assets/java_logo.png',
                     () {
                       print('Java category tapped');
-                      // Add navigation logic for Java category
                     },
                   ),
                   _buildCategoryItem(
@@ -356,7 +399,6 @@ class _HomePageState extends State<HomePage> {
                     'assets/html_logo.png',
                     () {
                       print('HTML category tapped');
-                      // Add navigation logic for HTML category
                     },
                   ),
                   _buildCategoryItem(
@@ -365,7 +407,6 @@ class _HomePageState extends State<HomePage> {
                     'assets/python_logo.png',
                     () {
                       print('Python category tapped');
-                      // Add navigation logic for Python category
                     },
                   ),
                 ],
@@ -407,7 +448,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getCategoryImage(String category, Color color) {
-    // Using custom widgets that resemble the programming language logos
     switch (category) {
       case 'C++':
         return Container(
@@ -445,37 +485,18 @@ class _HomePageState extends State<HomePage> {
         return Icon(Icons.code, color: color, size: 30);
     }
   }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category) {
-      case 'C++':
-        return Icons.code;
-      case 'Java':
-        return Icons.coffee;
-      case 'HTML':
-        return Icons.html;
-      case 'Python':
-        return Icons.integration_instructions;
-      default:
-        return Icons.category;
-    }
-  }
 }
 
-// Custom painters for programming language logos
+// Custom painters remain unchanged
 class CPlusPlusPainter extends CustomPainter {
   final Color color;
-
   CPlusPlusPainter(this.color);
-
   @override
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
           ..color = color
           ..style = PaintingStyle.fill;
-
-    // Draw C++
     final textStyle = TextStyle(
       color: color,
       fontSize: size.height * 0.8,
@@ -502,9 +523,7 @@ class CPlusPlusPainter extends CustomPainter {
 
 class JavaPainter extends CustomPainter {
   final Color color;
-
   JavaPainter(this.color);
-
   @override
   void paint(Canvas canvas, Size size) {
     final paint =
@@ -512,16 +531,12 @@ class JavaPainter extends CustomPainter {
           ..color = color
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
-
-    // Draw coffee cup
     final cup =
         Path()
           ..moveTo(size.width * 0.3, size.height * 0.3)
           ..lineTo(size.width * 0.3, size.height * 0.7)
           ..lineTo(size.width * 0.7, size.height * 0.7)
           ..lineTo(size.width * 0.7, size.height * 0.3);
-
-    // Handle
     final handle =
         Path()
           ..moveTo(size.width * 0.7, size.height * 0.4)
@@ -537,8 +552,6 @@ class JavaPainter extends CustomPainter {
             size.width * 0.7,
             size.height * 0.6,
           );
-
-    // Steam
     final steam =
         Path()
           ..moveTo(size.width * 0.4, size.height * 0.3)
@@ -554,7 +567,6 @@ class JavaPainter extends CustomPainter {
             size.width * 0.6,
             size.height * 0.3,
           );
-
     canvas.drawPath(cup, paint);
     canvas.drawPath(handle, paint);
     canvas.drawPath(steam, paint);
@@ -566,17 +578,13 @@ class JavaPainter extends CustomPainter {
 
 class HTMLPainter extends CustomPainter {
   final Color color;
-
   HTMLPainter(this.color);
-
   @override
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
           ..color = color
           ..style = PaintingStyle.fill;
-
-    // Draw simplified HTML5 shield
     final path =
         Path()
           ..moveTo(size.width * 0.1, 0)
@@ -585,10 +593,7 @@ class HTMLPainter extends CustomPainter {
           ..lineTo(size.width * 0.5, size.height * 0.9)
           ..lineTo(size.width * 0.2, size.height)
           ..close();
-
     canvas.drawPath(path, paint);
-
-    // Draw "5" in white
     final textStyle = TextStyle(
       color: Colors.white,
       fontSize: size.height * 0.5,
@@ -615,17 +620,13 @@ class HTMLPainter extends CustomPainter {
 
 class PythonPainter extends CustomPainter {
   final Color color;
-
   PythonPainter(this.color);
-
   @override
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
           ..color = color
           ..style = PaintingStyle.fill;
-
-    // Python logo (simplified as two snakes)
     final path1 =
         Path()
           ..moveTo(size.width * 0.3, size.height * 0.1)
@@ -647,7 +648,6 @@ class PythonPainter extends CustomPainter {
             size.width * 0.3,
             size.height,
           );
-
     final path2 =
         Path()
           ..moveTo(size.width * 0.7, size.height)
@@ -669,9 +669,7 @@ class PythonPainter extends CustomPainter {
             size.width * 0.7,
             0,
           );
-
     canvas.drawPath(path1, paint);
-
     paint.color = Colors.yellow;
     canvas.drawPath(path2, paint);
   }

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:tic_quiz/views/auth/Login.dart';
-import 'package:tic_quiz/views/auth/new_password.dart';
-import 'package:tic_quiz/views/auth/reset_password_phone.dart';
+import 'package:tic_quiz/screen/auth/Login.dart';
 
-class VerificationPassword extends StatefulWidget {
-  const VerificationPassword({super.key});
+
+class NewPassword extends StatefulWidget {
+  const NewPassword({super.key});
   @override
-  _verificationPassword createState() => _verificationPassword();
+  _newPassword createState() => _newPassword();
 }
 
-class _verificationPassword extends State<VerificationPassword> {
+class _newPassword extends State<NewPassword> {
   bool _obscurePassword = true;
 
   @override
@@ -20,16 +18,17 @@ class _verificationPassword extends State<VerificationPassword> {
 
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 100),
             Column(
               children: [
                 Center(
                   child: Text(
-                    "Verification",
+                    "New Password",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 40,
@@ -42,8 +41,10 @@ class _verificationPassword extends State<VerificationPassword> {
               ],
             ),
 
+            SizedBox(height: 10),
+
             Text(
-              "Enter verification code",
+              "Enter new password",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -51,38 +52,59 @@ class _verificationPassword extends State<VerificationPassword> {
               ),
             ),
             SizedBox(height: 5),
-            // TextField(
-            //   decoration: InputDecoration(
-            //     hintText: "Enter code here",
-            //     border: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(14),
-            //       borderSide: BorderSide(
-            //         color: const Color.fromARGB(128, 211, 211, 211),
-            //         width: 0.2,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            PinCodeTextField(
-              appContext: context,
-              length: 6,
+            TextField(
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
+                hintText: 'new password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide(
+                    color: const Color.fromARGB(128, 211, 211, 211),
+                    width: 0.2,
+                  ),
+                ),
 
-              keyboardType: TextInputType.number,
-              pinTheme: PinTheme(
-                shape: PinCodeFieldShape.circle,
-                // borderRadius: BorderRadius.circular(5),
-                fieldHeight: 40,
-                fieldWidth: 40,
-                activeFillColor: Colors.white,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Confirm New Password",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromARGB(255, 48, 45, 45),
+              ),
+            ),
+            SizedBox(height: 5),
+            TextField(
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'Confirm your password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide(
+                    color: const Color.fromARGB(128, 211, 211, 211),
+                    width: 0.2,
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 20),
-
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewPassword()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -95,63 +117,9 @@ class _verificationPassword extends State<VerificationPassword> {
                   ), // Set border radius for button
                 ),
               ),
-              child: Text('Verify', style: TextStyle(fontSize: 16)),
+              child: Text('Send Now', style: TextStyle(fontSize: 16)),
             ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "If you didn't receive the code, ",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: const Color.fromARGB(255, 64, 64, 64),
-                      ),
-                    ),
-                    SizedBox(width: 2),
-                    TextButton(
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => LoginScreen(),
-                        //   ),
-                        // );
-                      },
-                      child: Text(
-                        "Resend",
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 255, 0, 0),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-              child: Text(
-                "Back to login",
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 65, 64, 67),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-
+           
             SizedBox(height: 80),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

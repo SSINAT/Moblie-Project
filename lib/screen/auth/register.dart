@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/views/auth/Login.dart';
+import 'package:tic_quiz/screen/auth/Login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Register extends StatefulWidget {
@@ -26,11 +26,16 @@ Future<bool> registerUser({
         .createUserWithEmailAndPassword(email: email, password: password);
     User? user = userCredential.user;
 
-    // 2. Save additional user info in Firestore
+    // Set displayName in FirebaseAuth
+    await user?.updateDisplayName(name);
+
+    // Save additional user info in Firestore
+   String role = (email == 'admin@gmail.com') ? 'admin' : 'user';
     await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
       'uid': user.uid,
       'email': email,
       'name': name,
+      'role': role,
       'createdAt': Timestamp.now(),
     });
 
@@ -49,15 +54,6 @@ Future<bool> registerUser({
     } else {
       onError("An error occurred. Please try again.");
     }
-
-    // // if (e.code == 'weak-password') {
-    // //   _passwordError = "The password provided is too weak.";
-    // if (e.code == 'email-already-in-use') {
-
-    //   _passwordError = "The account already exists for that email.";
-    // } else {
-    //   _passwordError = "An error occurred. Please try again.";
-    // }
     return false;
   }
 }
@@ -65,6 +61,7 @@ Future<bool> registerUser({
 class _RegisterScreen extends State<Register> {
   bool _obscurePassword = true;
   String? _passwordError;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,11 +85,9 @@ class _RegisterScreen extends State<Register> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 20),
               ],
             ),
-
             SizedBox(height: 10),
             Text(
               "Name",
@@ -162,7 +157,6 @@ class _RegisterScreen extends State<Register> {
                     width: 0.2,
                   ),
                 ),
-
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword ? Icons.visibility : Icons.visibility_off,
@@ -206,7 +200,6 @@ class _RegisterScreen extends State<Register> {
               ),
             ),
             SizedBox(height: 20),
-
             ElevatedButton(
               onPressed: () async {
                 if (passwordController.text != confirmController.text) {
@@ -215,9 +208,8 @@ class _RegisterScreen extends State<Register> {
                   });
                   return;
                 }
-
                 setState(() {
-                  _passwordError = null; // Clear the error message
+                  _passwordError = null;
                 });
                 bool success = await registerUser(
                   name: nameController.text,
@@ -229,28 +221,23 @@ class _RegisterScreen extends State<Register> {
                         _passwordError = e;
                       }),
                 );
-               if (success) {
-                  Navigator.push(
+                if (success) {
+                  Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
-                } 
+                }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
                 backgroundColor: const Color.fromARGB(255, 43, 6, 253),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    20,
-                  ), // Set border radius for button
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
               child: Text('Create Account', style: TextStyle(fontSize: 16)),
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -317,18 +304,14 @@ class _RegisterScreen extends State<Register> {
             SizedBox(height: 5),
             ElevatedButton(
               onPressed: () {},
-
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 40),
                 backgroundColor: const Color.fromARGB(255, 222, 222, 222),
                 foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    10,
-                  ), // Set border radius for button
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

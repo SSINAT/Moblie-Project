@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/views/auth/Login.dart';
-import 'package:tic_quiz/views/auth/reset_password_phone.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:tic_quiz/screen/auth/Login.dart';
+import 'package:tic_quiz/screen/auth/new_password.dart';
+import 'package:tic_quiz/screen/auth/reset_password_phone.dart';
 
-import 'package:tic_quiz/views/auth/verification.dart';
-
-class ResetPasswordByEmail extends StatefulWidget {
-  const ResetPasswordByEmail({super.key});
+class VerificationPassword extends StatefulWidget {
+  const VerificationPassword({super.key});
   @override
-  _resetPassword createState() => _resetPassword();
+  _verificationPassword createState() => _verificationPassword();
 }
 
-class _resetPassword extends State<ResetPasswordByEmail> {
+class _verificationPassword extends State<VerificationPassword> {
   bool _obscurePassword = true;
 
   @override
@@ -20,7 +20,6 @@ class _resetPassword extends State<ResetPasswordByEmail> {
 
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,7 +29,7 @@ class _resetPassword extends State<ResetPasswordByEmail> {
               children: [
                 Center(
                   child: Text(
-                    "Recover Password",
+                    "Verification",
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 40,
@@ -43,9 +42,8 @@ class _resetPassword extends State<ResetPasswordByEmail> {
               ],
             ),
 
-            SizedBox(height: 10),
             Text(
-              "Enter your email here",
+              "Enter verification code",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -53,24 +51,38 @@ class _resetPassword extends State<ResetPasswordByEmail> {
               ),
             ),
             SizedBox(height: 5),
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Example: example@gmail.com",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(128, 211, 211, 211),
-                    width: 0.2,
-                  ),
-                ),
+            // TextField(
+            //   decoration: InputDecoration(
+            //     hintText: "Enter code here",
+            //     border: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(14),
+            //       borderSide: BorderSide(
+            //         color: const Color.fromARGB(128, 211, 211, 211),
+            //         width: 0.2,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            PinCodeTextField(
+              appContext: context,
+              length: 6,
+
+              keyboardType: TextInputType.number,
+              pinTheme: PinTheme(
+                shape: PinCodeFieldShape.circle,
+                // borderRadius: BorderRadius.circular(5),
+                fieldHeight: 40,
+                fieldWidth: 40,
+                activeFillColor: Colors.white,
               ),
             ),
             SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => VerificationPassword()),
+                  MaterialPageRoute(builder: (context) => NewPassword()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -83,17 +95,54 @@ class _resetPassword extends State<ResetPasswordByEmail> {
                   ), // Set border radius for button
                 ),
               ),
-              child: Text('Send Now', style: TextStyle(fontSize: 16)),
+              child: Text('Verify', style: TextStyle(fontSize: 16)),
             ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "If you didn't receive the code, ",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: const Color.fromARGB(255, 64, 64, 64),
+                      ),
+                    ),
+                    SizedBox(width: 2),
+                    TextButton(
+                      onPressed: () {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => LoginScreen(),
+                        //   ),
+                        // );
+                      },
+                      child: Text(
+                        "Resend",
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 255, 0, 0),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
             TextButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ResetPasswordByPhone()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
               child: Text(
-                "Use email phone number",
+                "Back to login",
                 style: TextStyle(
                   color: const Color.fromARGB(255, 65, 64, 67),
                   fontSize: 16,
@@ -102,6 +151,7 @@ class _resetPassword extends State<ResetPasswordByEmail> {
                 ),
               ),
             ),
+
             SizedBox(height: 80),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

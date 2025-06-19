@@ -9,7 +9,7 @@ class RankingService {
   Stream<List<UserRanking>> getTopRankings() {
     return _firestore
         .collection('users')
-        .orderBy('points', descending: true)
+        .orderBy('stars', descending: true) // Changed from points to stars
         .limit(50)
         .snapshots()
         .map((snapshot) {
@@ -39,12 +39,15 @@ class RankingService {
 
       final userData = userDoc.data()!;
       userData['uid'] = userId;
-      final userPoints = userData['points'] ?? 0;
+      final userStars = userData['stars'] ?? 0; // Changed from points to stars
 
       final higherRankedUsers =
           await _firestore
               .collection('users')
-              .where('points', isGreaterThan: userPoints)
+              .where(
+                'stars',
+                isGreaterThan: userStars,
+              ) // Changed from points to stars
               .count()
               .get();
 
@@ -63,7 +66,9 @@ class RankingService {
       if (userId == null) return;
 
       await _firestore.collection('users').doc(userId).update({
-        'points': FieldValue.increment(pointsToAdd),
+        'stars': FieldValue.increment(
+          pointsToAdd,
+        ), // Changed from points to stars
       });
     } catch (e) {
       print('Error updating user points: $e');

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tic_quiz/views/home_page.dart';
-import 'package:tic_quiz/views/quiz_page.dart';
-import 'package:tic_quiz/views/ranking_page.dart';
-import 'package:tic_quiz/views/profile_page.dart';
+import 'package:tic_quiz/screen/home_page.dart';
+import 'package:tic_quiz/screen/profile_page.dart';
+import 'package:tic_quiz/screen/quiz/startQuiz_page.dart';
+import 'package:tic_quiz/screen/ranking_page.dart';
 import 'package:tic_quiz/shared/bottom_nav_bar.dart';
 
 class MainScreen extends StatefulWidget {
@@ -13,14 +13,25 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  int _currentIndex = 0; // Default to HomePage
 
   final List<Widget> _pages = [
     const HomePage(),
-    const QuizPage(),
+    const StartQuizPage(),
     const RankingPage(),
-    ProfilePage(),
+    const ProfilePage(),
   ];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final arguments = ModalRoute.of(context)?.settings.arguments as int?;
+    if (arguments != null) {
+      setState(() {
+        _currentIndex = arguments;
+      });
+    }
+  }
 
   void _onTabTapped(int index) {
     if (index >= 0 && index < _pages.length) {
@@ -33,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex], // Remove SafeArea to allow full screen
+      body: _pages[_currentIndex], // Pages are rendered here
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,

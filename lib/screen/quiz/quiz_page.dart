@@ -39,9 +39,17 @@ class _QuizPageState extends State<QuizPage> {
     try {
       final fetchedQuestions = await _firestoreService.getQuestions('quizId');
       setState(() {
-        questions = fetchedQuestions.map((q) => q.toMap()).toList();
+        // Shuffle all questions and select exactly 9 (or all if less than 9)
+        List<Map<String, dynamic>> shuffledQuestions =
+            List<Map<String, dynamic>>.from(
+              fetchedQuestions.map((q) => q.toMap()),
+            )..shuffle();
+        questions =
+            shuffledQuestions.length >= 9
+                ? shuffledQuestions.sublist(0, 9)
+                : shuffledQuestions;
         isLoading = false;
-        // Calculate points per question: total 100 points divided by number of questions
+        // Calculate points per question: total 100 points divided by number of questions (max 9)
         pointsPerQuestion = questions.isNotEmpty ? 100 ~/ questions.length : 0;
       });
     } catch (e) {
@@ -143,136 +151,151 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Column(
-        children: [
-          AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: const Text('Quiz Time'),
-          ),
-          const Center(child: CircularProgressIndicator()),
-        ],
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              title: const Text('Quiz Time'),
+            ),
+            const Center(child: CircularProgressIndicator()),
+          ],
+        ),
       );
     }
 
     if (questions.isEmpty) {
-      return Column(
-        children: [
-          AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: const Text('Quiz Time'),
-          ),
-          const Center(child: Text('No questions available')),
-        ],
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              title: const Text('Quiz Time'),
+            ),
+            const Center(child: Text('No questions available')),
+          ],
+        ),
       );
     }
 
     final currentQuestion = questions[currentQuestionIndex];
 
-    return Column(
-      children: [
-        AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 20), // Reduced size to 20
-            onPressed: () {
-              Navigator.pop(context);
-            },
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                size: 20,
+              ), // Reduced size to 20
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: const Text('Quiz Time'),
           ),
-          title: const Text('Quiz Time'),
-        ),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Question ${currentQuestionIndex + 1}/${questions.length}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[100],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      currentQuestion['text'],
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ),
-                  if (currentQuestion['imageUrl'] != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Image.network(
-                        currentQuestion['imageUrl']!,
-                        height: 100,
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Question ${currentQuestionIndex + 1}/${questions.length}',
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
-                  const SizedBox(height: 20),
-                  LinearProgressIndicator(
-                    value: (currentQuestionIndex + 1) / questions.length,
-                    color: Colors.orange,
-                    backgroundColor: Colors.white.withOpacity(0.5),
-                  ),
-                  const SizedBox(height: 20),
-                  ...List.generate(currentQuestion['options'].length, (index) {
-                    final isCorrect = index == currentQuestion['correctIndex'];
-                    final isSelected = index == selectedAnswerIndex;
-                    Color bgColor = Colors.white;
-                    Icon? icon;
-
-                    if (answered) {
-                      if (isSelected && isCorrect) {
-                        bgColor = Colors.green;
-                        icon = const Icon(Icons.check, color: Colors.white);
-                      } else if (isSelected && !isCorrect) {
-                        bgColor = Colors.red;
-                        icon = const Icon(Icons.close, color: Colors.white);
-                      } else if (isCorrect) {
-                        bgColor = Colors.green;
-                        icon = const Icon(Icons.check, color: Colors.white);
-                      }
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ElevatedButton.icon(
-                        onPressed: () => _handleAnswer(index),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          backgroundColor: bgColor,
-                          foregroundColor: Colors.black,
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        currentQuestion['text'],
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    if (currentQuestion['imageUrl'] != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Image.network(
+                          currentQuestion['imageUrl']!,
+                          height: 100,
                         ),
-                        icon: icon ?? const SizedBox.shrink(),
-                        label: Text(currentQuestion['options'][index]),
                       ),
-                    );
-                  }),
-                  const SizedBox(height: 20),
-                  if (answered)
-                    ElevatedButton(
-                      onPressed: _nextQuestion,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('NEXT'),
+                    const SizedBox(height: 20),
+                    LinearProgressIndicator(
+                      value: (currentQuestionIndex + 1) / questions.length,
+                      color: Colors.orange,
+                      backgroundColor: Colors.white.withOpacity(0.5),
                     ),
-                ],
+                    const SizedBox(height: 20),
+                    ...List.generate(currentQuestion['options'].length, (
+                      index,
+                    ) {
+                      final isCorrect =
+                          index == currentQuestion['correctIndex'];
+                      final isSelected = index == selectedAnswerIndex;
+                      Color bgColor = Colors.white;
+                      Icon? icon;
+
+                      if (answered) {
+                        if (isSelected && isCorrect) {
+                          bgColor = Colors.green;
+                          icon = const Icon(Icons.check, color: Colors.white);
+                        } else if (isSelected && !isCorrect) {
+                          bgColor = Colors.red;
+                          icon = const Icon(Icons.close, color: Colors.white);
+                        } else if (isCorrect) {
+                          bgColor = Colors.green;
+                          icon = const Icon(Icons.check, color: Colors.white);
+                        }
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () => _handleAnswer(index),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            backgroundColor: bgColor,
+                            foregroundColor: Colors.black,
+                          ),
+                          icon: icon ?? const SizedBox.shrink(),
+                          label: Text(currentQuestion['options'][index]),
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 20),
+                    if (answered)
+                      ElevatedButton(
+                        onPressed: _nextQuestion,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('NEXT'),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

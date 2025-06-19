@@ -6,7 +6,6 @@ class UserModel {
   final String bio;
   final String grade;
   final String language;
-  final String? profileImageUrl;
 
   UserModel({
     required this.uid,
@@ -16,7 +15,6 @@ class UserModel {
     required this.bio,
     required this.grade,
     required this.language,
-    this.profileImageUrl,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -28,7 +26,6 @@ class UserModel {
       bio: map['bio'] ?? '',
       grade: map['grade'] ?? '',
       language: map['language'] ?? '',
-      profileImageUrl: map['profileImageUrl'],
     );
   }
 
@@ -41,7 +38,25 @@ class UserModel {
       'bio': bio,
       'grade': grade,
       'language': language,
-      'profileImageUrl': profileImageUrl,
     };
+  }
+
+  UserModel copyWith({
+    String? name,
+    String? username,
+    String? email,
+    String? bio,
+    String? grade,
+    String? language,
+  }) {
+    return UserModel(
+      uid: uid,
+      name: name ?? this.name,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      bio: bio ?? this.bio,
+      grade: grade ?? this.grade,
+      language: language ?? this.language,
+    );
   }
 }

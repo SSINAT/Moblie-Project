@@ -18,6 +18,27 @@ class UserModel {
     required this.language,
     this.profileImageUrl,
   });
+UserModel copyWith({
+    String? uid,
+    String? name,
+    String? username,
+    String? email,
+    String? bio,
+    String? grade,
+    String? language,
+    String? profileImageUrl,
+  }) {
+    return UserModel(
+      uid: uid ?? this.uid,
+      name: name ?? this.name,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      bio: bio ?? this.bio,
+      grade: grade ?? this.grade,
+      language: language ?? this.language,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+    );
+  }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(

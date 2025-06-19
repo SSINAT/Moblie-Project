@@ -10,6 +10,7 @@ class AdminDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Current user: ${FirebaseAuth.instance.currentUser?.uid}');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Dashboard'),
@@ -17,7 +18,6 @@ class AdminDashboardScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () async {
-            // Show confirmation dialog
             final shouldLogout = await showDialog<bool>(
               context: context,
               builder:
@@ -37,11 +37,9 @@ class AdminDashboardScreen extends StatelessWidget {
                   ),
             );
 
-            // If user confirms logout
             if (shouldLogout == true) {
               try {
-                await FirebaseAuth.instance.signOut(); // Sign out from Firebase
-                // Navigate to Welcome screen, replacing the current route
+                await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacementNamed(context, '/welcome');
               } catch (e) {
                 ScaffoldMessenger.of(
@@ -70,6 +68,9 @@ class AdminDashboardScreen extends StatelessWidget {
               child: StreamBuilder<List<Map<String, dynamic>>>(
                 stream: FirestoreService().getQuestionsStream('quizId'),
                 builder: (context, snapshot) {
+                  print(
+                    'Snapshot data: ${snapshot.data}, hasError: ${snapshot.hasError}, hasData: ${snapshot.hasData}',
+                  );
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }

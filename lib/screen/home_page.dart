@@ -300,13 +300,7 @@ class _HomePageState extends State<HomePage> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                const Text(
-                                                  '/50',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black54,
-                                                  ),
-                                                ),
+                                             
                                                 const Text(
                                                   'quiz played',
                                                   style: TextStyle(

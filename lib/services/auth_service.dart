@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../models/user_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  final FirebaseStorage _storage = FirebaseStorage.instance; // Define _storage
 
   User? get currentUser => _auth.currentUser;
 
@@ -94,7 +99,14 @@ class AuthService {
       print('Error updating password: $e');
     }
   }
-
+Future<void> reauthenticateUser(String email, String password) async {
+    try {
+      final credential = EmailAuthProvider.credential(email: email, password: password);
+      await currentUser?.reauthenticateWithCredential(credential);
+    } catch (e) {
+      throw Exception('Re-authentication failed: $e');
+    }
+  }
   // Delete account
   Future<void> deleteAccount() async {
     try {
@@ -137,6 +149,28 @@ class AuthService {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
       print('Error sending password reset email: $e');
+    }
+  }
+
+  Future<void> updateUserName(UserModel user) async {
+    try {
+      await _firestore.collection('users').doc(user.uid).set({
+        'username': user.username,
+      
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('Error updating user data: $e');
+    }
+  }
+Future<String?> uploadProfileImage(String uid, File image) async {
+    try {
+      final storageRef = _storage.ref().child('users/$uid/profile.jpg');
+      await storageRef.putFile(image);
+      final downloadUrl = await storageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
     }
   }
 }

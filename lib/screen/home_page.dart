@@ -129,7 +129,12 @@ class _HomePageState extends State<HomePage> {
                                       (context, error, stackTrace) =>
                                           const Icon(
                                             Icons.person,
-                                            color: Color.fromARGB(255, 157, 16, 16),
+                                            color: Color.fromARGB(
+                                              255,
+                                              157,
+                                              16,
+                                              16,
+                                            ),
                                           ),
                                 ),
                               ),
@@ -241,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                                   children: [
                                     RichText(
                                       textAlign: TextAlign.center,
-                                      text: const TextSpan(
+                                      text: TextSpan(
                                         style: TextStyle(
                                           fontSize: 18,
                                           color: Colors.black,
@@ -253,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                                                 'You have attempted a\ntotal ',
                                           ),
                                           TextSpan(
-                                            text: '40',
+                                            text: '${historyData.length}',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -278,7 +283,10 @@ class _HomePageState extends State<HomePage> {
                                         fit: StackFit.expand,
                                         children: [
                                           CircularProgressIndicator(
-                                            value: 40 / 50,
+                                            value:
+                                                historyData.isNotEmpty
+                                                    ? historyData.length / 50
+                                                    : 0,
                                             backgroundColor: Colors.white,
                                             valueColor:
                                                 const AlwaysStoppedAnimation<
@@ -300,7 +308,6 @@ class _HomePageState extends State<HomePage> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                             
                                                 const Text(
                                                   'quiz played',
                                                   style: TextStyle(
@@ -481,7 +488,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Custom painters remain unchanged
 class CPlusPlusPainter extends CustomPainter {
   final Color color;
   CPlusPlusPainter(this.color);

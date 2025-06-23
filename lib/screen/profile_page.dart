@@ -485,24 +485,37 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: false,
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   title: const Text(
+      //     'Profile',
+      //     style: TextStyle(
+      //       color: Colors.black,
+      //       fontSize: 18,
+      //       fontWeight: FontWeight.w500,
+      //     ),
+      //   ),
+      //   centerTitle: false,
+      // ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+             SizedBox(
+              height: 30,
+            ),
             // Profile Header
+            // Text(
+            //   "Profile",
+            //   style: TextStyle(
+            //   fontSize: 24,
+            //   fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            SizedBox(
+              height: 10,
+            ),
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(

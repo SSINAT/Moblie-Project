@@ -53,11 +53,12 @@ class _RankingScreenState extends State<RankingPage> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding:EdgeInsets.symmetric(vertical: 40, horizontal: 5),
       child: Row(
         children: [
           Expanded(
             child: Center(
+              
               child: Text(
                 'Ranking',
                 style: TextStyle(

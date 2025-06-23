@@ -6,11 +6,18 @@ import 'package:tic_quiz/screen/main_page.dart';
 import 'package:tic_quiz/screen/admin/admin_dashboard_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  LoginScreen({super.key});
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  LoginScreen({super.key});
+  bool _obscurePassword = true;
 
   Future<void> login(BuildContext context) async {
     try {
@@ -57,16 +64,11 @@ class LoginScreen extends StatelessWidget {
         }
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Login successful'),
-          backgroundColor: Colors.green,
-        ),
-      );
+     
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login failed: $e'),
+          content: Text('Login failed'),
           backgroundColor: Colors.red,
         ),
       );
@@ -76,9 +78,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 65),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,11 +114,23 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 16),
               Text('Password'),
               TextField(
-                obscureText: true,
+                obscureText: _obscurePassword,
                 controller: passwordController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.visibility_off),
+                  hintText: '1234567',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
               ),
               SizedBox(height: 16),

@@ -138,7 +138,7 @@ class _QuizPageState extends State<QuizPage> {
     } else {
       final totalScore = score;
       final route =
-          totalScore >= (100 * 0.2)
+          totalScore >= (100 * 0.5)
               ? AppRoutes.win
               : AppRoutes.lose; // Adjust win threshold
       await _saveScore(totalScore);

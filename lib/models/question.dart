@@ -12,7 +12,7 @@ class Question {
     required this.correctIndex,
     this.imageUrl,
   });
-
+//Create new questions from JSON or Firebase 
   factory Question.fromMap(Map<String, dynamic> data) {
     return Question(
       id: data['id'] ?? '',
@@ -22,7 +22,7 @@ class Question {
       imageUrl: data['imageUrl'],
     );
   }
-
+//Convert the object back to a map for saving to Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,

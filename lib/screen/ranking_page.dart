@@ -182,7 +182,7 @@ class _RankingScreenState extends State<RankingPage> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.circle, color: Colors.white, size: 16),
+              const Icon(Icons.star, color: Colors.white, size: 16),
               const SizedBox(width: 4),
               Text(
                 _formatStars(user.stars), // Changed from points to stars
@@ -284,13 +284,13 @@ class _RankingScreenState extends State<RankingPage> {
           ],
         ),
         title: Text(
-          ranking.name,
+          ranking.name,    //star
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.circle, color: Colors.grey, size: 16),
+            const Icon(Icons.star, color: Color.fromARGB(255, 255, 255, 255), size: 16),
             const SizedBox(width: 4),
             Text(
               _formatStars(ranking.stars), // Changed from points to stars

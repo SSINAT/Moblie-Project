@@ -2,7 +2,7 @@ class UserRanking {
   final String uid;
   final String name;
   final String photoUrl;
-  final int stars; // Changed from points to stars
+  final int stars; 
   final int rank;
 
   UserRanking({
@@ -18,7 +18,7 @@ class UserRanking {
       uid: data['uid'] ?? '',
       name: data['name'] ?? 'Unknown',
       photoUrl: data['photoUrl'] ?? '',
-      stars: data['stars'] ?? 0, // Changed from points to stars
+      stars: data['stars'] ?? 0, 
       rank: rank,
     );
   }

@@ -98,10 +98,10 @@ class _ProfilePageState extends State<ProfilePage> {
         final imageUrl = await _authService.uploadProfileImage(uid, image);
         if (imageUrl != null) {
           setState(() {
-            _user = _user?.copyWith(profileImageUrl: imageUrl);
+            _user = _user?.copyWith(photoUrl: imageUrl);
           });
           await _authService.updateUserData(
-            _user!.copyWith(profileImageUrl: imageUrl),
+            _user!.copyWith(photoUrl: imageUrl),
           );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profile image updated successfully')),
@@ -533,10 +533,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           radius: 30,
                           backgroundColor: Colors.black,
                           child:
-                              _user?.profileImageUrl != null
+                              _user?.photoUrl != null
                                   ? ClipOval(
                                     child: Image.network(
-                                      _user!.profileImageUrl!,
+                                      _user!.photoUrl!,
                                       width: 60,
                                       height: 60,
                                       fit: BoxFit.cover,

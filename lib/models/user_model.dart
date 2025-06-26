@@ -6,8 +6,8 @@ class UserModel {
   final String bio;
   final String grade;
   final String language;
-  final String? profileImageUrl;
-
+  final String? photoUrl;
+//set data to model 
   UserModel({
     required this.uid,
     required this.name,
@@ -16,7 +16,7 @@ class UserModel {
     required this.bio,
     required this.grade,
     required this.language,
-    this.profileImageUrl,
+    this.photoUrl,
   });
 UserModel copyWith({
     String? uid,
@@ -26,7 +26,7 @@ UserModel copyWith({
     String? bio,
     String? grade,
     String? language,
-    String? profileImageUrl,
+    String? photoUrl,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -36,10 +36,10 @@ UserModel copyWith({
       bio: bio ?? this.bio,
       grade: grade ?? this.grade,
       language: language ?? this.language,
-      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      photoUrl: photoUrl ?? this.photoUrl,
     );
   }
-
+//Create new questions from JSON or Firebase 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'] ?? '',
@@ -49,10 +49,10 @@ UserModel copyWith({
       bio: map['bio'] ?? '',
       grade: map['grade'] ?? '',
       language: map['language'] ?? '',
-      profileImageUrl: map['profileImageUrl'],
+     photoUrl: map['photoUrl'] ?? ''
     );
   }
-
+//Convert the object back to a map for saving to Firestore
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -62,7 +62,7 @@ UserModel copyWith({
       'bio': bio,
       'grade': grade,
       'language': language,
-      'profileImageUrl': profileImageUrl,
+      'photoUrl': photoUrl,
     };
   }
 }

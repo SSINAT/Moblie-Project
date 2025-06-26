@@ -20,7 +20,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
   File? _image;
   final _picker = ImagePicker();
   bool _isLoading = false;
-
+// Image Picker Function
   Future<void> _pickImage() async {
     var status = await Permission.storage.request();
     if (status.isGranted) {

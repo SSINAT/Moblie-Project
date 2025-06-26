@@ -337,7 +337,7 @@ class _HomePageState extends State<HomePage> {
                                           horizontal: 12,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFFEED6A7),
+                                          color:  const Color(0xFFFEF0D1),
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
